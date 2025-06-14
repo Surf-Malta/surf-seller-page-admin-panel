@@ -1,83 +1,86 @@
+"use client";
+
 import React, { useState, useEffect } from "react";
 import {
   Save,
   Globe,
-  Search,
-  Share2,
-  Bell,
-  Shield,
-  Palette,
+  DollarSign,
   Mail,
+  Palette,
+  Shield,
+  Bell,
+  Search,
 } from "lucide-react";
 
-const SettingsManager = () => {
+const SellerSettingsManager = () => {
   const [settings, setSettings] = useState({
-    // Site Information
-    siteName: "",
-    siteDescription: "",
-    siteUrl: "",
-    adminEmail: "",
-    timezone: "UTC",
-    language: "en",
+    // Platform Information
+    platformName: "SellerHub",
+    platformDescription: "The ultimate platform for online sellers",
+    platformUrl: "https://your-seller-platform.com",
+    supportEmail: "support@your-platform.com",
 
-    // SEO Settings
-    metaTitle: "",
-    metaDescription: "",
-    metaKeywords: "",
-    googleAnalyticsId: "",
-    googleSearchConsole: "",
+    // Seller Onboarding
+    allowInstantApproval: true,
+    requireBusinessVerification: false,
+    minimumAge: 18,
+    supportedCountries: "US,CA,UK,AU",
 
-    // Social Media
-    facebookUrl: "",
-    twitterUrl: "",
-    instagramUrl: "",
-    linkedinUrl: "",
-    youtubeUrl: "",
+    // Commission & Fees
+    commissionRate: 5,
+    processingFee: 2.9,
+    monthlyFee: 0,
+    listingFee: 0,
+    withdrawalFee: 1,
 
-    // Email Settings
-    smtpHost: "",
-    smtpPort: "",
-    smtpUsername: "",
-    smtpPassword: "",
-    fromEmail: "",
-    fromName: "",
+    // Email Templates
+    welcomeEmailEnabled: true,
+    approvalEmailEnabled: true,
+    salesNotificationEnabled: true,
+    monthlyReportEnabled: true,
 
-    // Security Settings
-    maintenanceMode: false,
-    allowRegistration: true,
-    passwordMinLength: 8,
-    sessionTimeout: 30,
-
-    // Appearance
+    // Platform Appearance
     primaryColor: "#3B82F6",
     secondaryColor: "#10B981",
     logoUrl: "",
     faviconUrl: "",
+    brandFont: "Inter",
+
+    // SEO Settings
+    metaTitle: "Sell Online - Your Seller Platform",
+    metaDescription:
+      "Join thousands of successful sellers on our platform. Easy setup, powerful tools, and unlimited potential.",
+    metaKeywords: "sell online, e-commerce, marketplace, sellers",
+
+    // Security
+    twoFactorRequired: false,
+    passwordMinLength: 8,
+    sessionTimeout: 60,
+    maxLoginAttempts: 5,
 
     // Notifications
     emailNotifications: true,
-    newUserNotifications: true,
-    systemAlerts: true,
+    smsNotifications: false,
+    pushNotifications: true,
+    marketingEmails: true,
   });
 
-  const [activeTab, setActiveTab] = useState("general");
+  const [activeTab, setActiveTab] = useState("platform");
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState({ type: "", text: "" });
 
-  // Load settings on component mount
   useEffect(() => {
     loadSettings();
   }, []);
 
   const loadSettings = () => {
-    // In a real app, this would fetch from your API
-    const savedSettings = localStorage.getItem("adminSettings");
+    const savedSettings = localStorage.getItem("sellerPlatformSettings");
     if (savedSettings) {
       setSettings(JSON.parse(savedSettings));
     }
   };
 
-  const handleInputChange = (field, value) => {
+  const handleInputChange = (field: string, value: any) => {
     setSettings((prev) => ({
       ...prev,
       [field]: value,
@@ -87,12 +90,8 @@ const SettingsManager = () => {
   const handleSave = async () => {
     setIsLoading(true);
     try {
-      // In a real app, this would save to your API
-      localStorage.setItem("adminSettings", JSON.stringify(settings));
-
-      // Simulate API call
+      localStorage.setItem("sellerPlatformSettings", JSON.stringify(settings));
       await new Promise((resolve) => setTimeout(resolve, 1000));
-
       setMessage({ type: "success", text: "Settings saved successfully!" });
       setTimeout(() => setMessage({ type: "", text: "" }), 3000);
     } catch (error) {
@@ -107,245 +106,269 @@ const SettingsManager = () => {
   };
 
   const tabs = [
-    { id: "general", name: "General", icon: Globe },
-    { id: "seo", name: "SEO", icon: Search },
-    { id: "social", name: "Social Media", icon: Share2 },
-    { id: "email", name: "Email", icon: Mail },
-    { id: "security", name: "Security", icon: Shield },
+    { id: "platform", name: "Platform", icon: Globe },
+    { id: "commission", name: "Fees & Commission", icon: DollarSign },
+    { id: "email", name: "Email Settings", icon: Mail },
     { id: "appearance", name: "Appearance", icon: Palette },
+    { id: "seo", name: "SEO", icon: Search },
+    { id: "security", name: "Security", icon: Shield },
     { id: "notifications", name: "Notifications", icon: Bell },
   ];
 
-  const renderGeneralSettings = () => (
+  const renderPlatformSettings = () => (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Site Name
+            Platform Name
           </label>
           <input
             type="text"
-            value={settings.siteName}
-            onChange={(e) => handleInputChange("siteName", e.target.value)}
+            value={settings.platformName}
+            onChange={(e) => handleInputChange("platformName", e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Your Website Name"
+            placeholder="Your Seller Platform"
           />
         </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Site URL
+            Platform URL
           </label>
           <input
             type="url"
-            value={settings.siteUrl}
-            onChange={(e) => handleInputChange("siteUrl", e.target.value)}
+            value={settings.platformUrl}
+            onChange={(e) => handleInputChange("platformUrl", e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="https://yoursite.com"
+            placeholder="https://your-platform.com"
           />
         </div>
       </div>
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          Site Description
+          Platform Description
         </label>
         <textarea
-          value={settings.siteDescription}
-          onChange={(e) => handleInputChange("siteDescription", e.target.value)}
-          rows="3"
+          value={settings.platformDescription}
+          onChange={(e) =>
+            handleInputChange("platformDescription", e.target.value)
+          }
+          rows={3}
           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="Brief description of your website"
+          placeholder="Brief description of your seller platform"
         />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Admin Email
+            Support Email
           </label>
           <input
             type="email"
-            value={settings.adminEmail}
-            onChange={(e) => handleInputChange("adminEmail", e.target.value)}
+            value={settings.supportEmail}
+            onChange={(e) => handleInputChange("supportEmail", e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="admin@yoursite.com"
+            placeholder="support@your-platform.com"
           />
         </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Timezone
+            Supported Countries (comma-separated)
           </label>
-          <select
-            value={settings.timezone}
-            onChange={(e) => handleInputChange("timezone", e.target.value)}
+          <input
+            type="text"
+            value={settings.supportedCountries}
+            onChange={(e) =>
+              handleInputChange("supportedCountries", e.target.value)
+            }
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="UTC">UTC</option>
-            <option value="America/New_York">Eastern Time</option>
-            <option value="America/Chicago">Central Time</option>
-            <option value="America/Denver">Mountain Time</option>
-            <option value="America/Los_Angeles">Pacific Time</option>
-            <option value="Europe/London">London</option>
-            <option value="Europe/Paris">Paris</option>
-            <option value="Asia/Tokyo">Tokyo</option>
-            <option value="Asia/Kolkata">India</option>
-          </select>
+            placeholder="US,CA,UK,AU"
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+          <div>
+            <h3 className="font-medium text-gray-900">
+              Instant Seller Approval
+            </h3>
+            <p className="text-sm text-gray-600">
+              Allow sellers to start selling immediately
+            </p>
+          </div>
+          <label className="relative inline-flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              checked={settings.allowInstantApproval}
+              onChange={(e) =>
+                handleInputChange("allowInstantApproval", e.target.checked)
+              }
+              className="sr-only peer"
+            />
+            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+          </label>
+        </div>
+
+        <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+          <div>
+            <h3 className="font-medium text-gray-900">
+              Business Verification Required
+            </h3>
+            <p className="text-sm text-gray-600">
+              Require business documents for approval
+            </p>
+          </div>
+          <label className="relative inline-flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              checked={settings.requireBusinessVerification}
+              onChange={(e) =>
+                handleInputChange(
+                  "requireBusinessVerification",
+                  e.target.checked
+                )
+              }
+              className="sr-only peer"
+            />
+            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+          </label>
         </div>
       </div>
     </div>
   );
 
-  const renderSEOSettings = () => (
+  const renderCommissionSettings = () => (
     <div className="space-y-6">
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Meta Title
-        </label>
-        <input
-          type="text"
-          value={settings.metaTitle}
-          onChange={(e) => handleInputChange("metaTitle", e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="Your Site Title"
-          maxLength="60"
-        />
-        <p className="text-xs text-gray-500 mt-1">
-          Recommended: 50-60 characters
+      <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+        <h3 className="font-medium text-blue-900 mb-2">Commission Structure</h3>
+        <p className="text-sm text-blue-700">
+          Set your platform's fee structure. These fees will be displayed to
+          sellers during onboarding.
         </p>
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Meta Description
-        </label>
-        <textarea
-          value={settings.metaDescription}
-          onChange={(e) => handleInputChange("metaDescription", e.target.value)}
-          rows="3"
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="Brief description for search engines"
-          maxLength="160"
-        />
-        <p className="text-xs text-gray-500 mt-1">
-          Recommended: 150-160 characters
-        </p>
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Meta Keywords
-        </label>
-        <input
-          type="text"
-          value={settings.metaKeywords}
-          onChange={(e) => handleInputChange("metaKeywords", e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="keyword1, keyword2, keyword3"
-        />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Google Analytics ID
+            Commission Rate (%)
           </label>
-          <input
-            type="text"
-            value={settings.googleAnalyticsId}
-            onChange={(e) =>
-              handleInputChange("googleAnalyticsId", e.target.value)
-            }
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="G-XXXXXXXXXX"
-          />
+          <div className="relative">
+            <input
+              type="number"
+              value={settings.commissionRate}
+              onChange={(e) =>
+                handleInputChange("commissionRate", parseFloat(e.target.value))
+              }
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              min="0"
+              max="50"
+              step="0.1"
+            />
+            <span className="absolute right-3 top-2 text-gray-500">%</span>
+          </div>
+          <p className="text-xs text-gray-500 mt-1">
+            Percentage taken from each sale
+          </p>
         </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Google Search Console
+            Payment Processing Fee (%)
           </label>
-          <input
-            type="text"
-            value={settings.googleSearchConsole}
-            onChange={(e) =>
-              handleInputChange("googleSearchConsole", e.target.value)
-            }
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Verification code"
-          />
+          <div className="relative">
+            <input
+              type="number"
+              value={settings.processingFee}
+              onChange={(e) =>
+                handleInputChange("processingFee", parseFloat(e.target.value))
+              }
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              min="0"
+              max="10"
+              step="0.1"
+            />
+            <span className="absolute right-3 top-2 text-gray-500">%</span>
+          </div>
+          <p className="text-xs text-gray-500 mt-1">
+            Credit card processing fees
+          </p>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Monthly Subscription Fee ($)
+          </label>
+          <div className="relative">
+            <span className="absolute left-3 top-2 text-gray-500">$</span>
+            <input
+              type="number"
+              value={settings.monthlyFee}
+              onChange={(e) =>
+                handleInputChange("monthlyFee", parseFloat(e.target.value))
+              }
+              className="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              min="0"
+              step="0.01"
+            />
+          </div>
+          <p className="text-xs text-gray-500 mt-1">
+            Monthly fee for sellers (0 for free)
+          </p>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Listing Fee ($)
+          </label>
+          <div className="relative">
+            <span className="absolute left-3 top-2 text-gray-500">$</span>
+            <input
+              type="number"
+              value={settings.listingFee}
+              onChange={(e) =>
+                handleInputChange("listingFee", parseFloat(e.target.value))
+              }
+              className="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              min="0"
+              step="0.01"
+            />
+          </div>
+          <p className="text-xs text-gray-500 mt-1">Fee per product listing</p>
         </div>
       </div>
-    </div>
-  );
 
-  const renderSocialSettings = () => (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Facebook URL
-          </label>
-          <input
-            type="url"
-            value={settings.facebookUrl}
-            onChange={(e) => handleInputChange("facebookUrl", e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="https://facebook.com/yourpage"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Twitter URL
-          </label>
-          <input
-            type="url"
-            value={settings.twitterUrl}
-            onChange={(e) => handleInputChange("twitterUrl", e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="https://twitter.com/yourusername"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Instagram URL
-          </label>
-          <input
-            type="url"
-            value={settings.instagramUrl}
-            onChange={(e) => handleInputChange("instagramUrl", e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="https://instagram.com/yourusername"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            LinkedIn URL
-          </label>
-          <input
-            type="url"
-            value={settings.linkedinUrl}
-            onChange={(e) => handleInputChange("linkedinUrl", e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="https://linkedin.com/company/yourcompany"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            YouTube URL
-          </label>
-          <input
-            type="url"
-            value={settings.youtubeUrl}
-            onChange={(e) => handleInputChange("youtubeUrl", e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="https://youtube.com/channel/yourchannel"
-          />
+      <div className="bg-gray-50 p-4 rounded-lg">
+        <h4 className="font-medium text-gray-900 mb-3">
+          Fee Calculator Preview
+        </h4>
+        <div className="space-y-2 text-sm">
+          <div className="flex justify-between">
+            <span>Sale Amount:</span>
+            <span>$100.00</span>
+          </div>
+          <div className="flex justify-between text-red-600">
+            <span>Commission ({settings.commissionRate}%):</span>
+            <span>-${((100 * settings.commissionRate) / 100).toFixed(2)}</span>
+          </div>
+          <div className="flex justify-between text-red-600">
+            <span>Processing Fee ({settings.processingFee}%):</span>
+            <span>-${((100 * settings.processingFee) / 100).toFixed(2)}</span>
+          </div>
+          <div className="border-t pt-2 flex justify-between font-medium text-green-600">
+            <span>Seller Receives:</span>
+            <span>
+              $
+              {(
+                100 -
+                (100 * settings.commissionRate) / 100 -
+                (100 * settings.processingFee) / 100
+              ).toFixed(2)}
+            </span>
+          </div>
         </div>
       </div>
     </div>
@@ -353,159 +376,95 @@ const SettingsManager = () => {
 
   const renderEmailSettings = () => (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            SMTP Host
-          </label>
-          <input
-            type="text"
-            value={settings.smtpHost}
-            onChange={(e) => handleInputChange("smtpHost", e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="smtp.gmail.com"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            SMTP Port
-          </label>
-          <input
-            type="number"
-            value={settings.smtpPort}
-            onChange={(e) => handleInputChange("smtpPort", e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="587"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            SMTP Username
-          </label>
-          <input
-            type="text"
-            value={settings.smtpUsername}
-            onChange={(e) => handleInputChange("smtpUsername", e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="your-email@gmail.com"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            SMTP Password
-          </label>
-          <input
-            type="password"
-            value={settings.smtpPassword}
-            onChange={(e) => handleInputChange("smtpPassword", e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="••••••••"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            From Email
-          </label>
-          <input
-            type="email"
-            value={settings.fromEmail}
-            onChange={(e) => handleInputChange("fromEmail", e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="noreply@yoursite.com"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            From Name
-          </label>
-          <input
-            type="text"
-            value={settings.fromName}
-            onChange={(e) => handleInputChange("fromName", e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Your Site Name"
-          />
-        </div>
-      </div>
-    </div>
-  );
-
-  const renderSecuritySettings = () => (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-        <div>
-          <h3 className="font-medium text-gray-900">Maintenance Mode</h3>
-          <p className="text-sm text-gray-600">
-            Put your site in maintenance mode
-          </p>
-        </div>
-        <label className="relative inline-flex items-center cursor-pointer">
-          <input
-            type="checkbox"
-            checked={settings.maintenanceMode}
-            onChange={(e) =>
-              handleInputChange("maintenanceMode", e.target.checked)
-            }
-            className="sr-only peer"
-          />
-          <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-        </label>
-      </div>
-
-      <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-        <div>
-          <h3 className="font-medium text-gray-900">Allow Registration</h3>
-          <p className="text-sm text-gray-600">Allow new users to register</p>
-        </div>
-        <label className="relative inline-flex items-center cursor-pointer">
-          <input
-            type="checkbox"
-            checked={settings.allowRegistration}
-            onChange={(e) =>
-              handleInputChange("allowRegistration", e.target.checked)
-            }
-            className="sr-only peer"
-          />
-          <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-        </label>
+      <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+        <h3 className="font-medium text-yellow-800 mb-2">
+          Email Configuration
+        </h3>
+        <p className="text-sm text-yellow-700">
+          Configure automated emails sent to sellers throughout their journey on
+          your platform.
+        </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Password Minimum Length
+        <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+          <div>
+            <h3 className="font-medium text-gray-900">Welcome Email</h3>
+            <p className="text-sm text-gray-600">
+              Send welcome email to new sellers
+            </p>
+          </div>
+          <label className="relative inline-flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              checked={settings.welcomeEmailEnabled}
+              onChange={(e) =>
+                handleInputChange("welcomeEmailEnabled", e.target.checked)
+              }
+              className="sr-only peer"
+            />
+            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
           </label>
-          <input
-            type="number"
-            value={settings.passwordMinLength}
-            onChange={(e) =>
-              handleInputChange("passwordMinLength", parseInt(e.target.value))
-            }
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            min="6"
-            max="20"
-          />
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Session Timeout (minutes)
+        <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+          <div>
+            <h3 className="font-medium text-gray-900">Approval Email</h3>
+            <p className="text-sm text-gray-600">
+              Notify sellers when approved
+            </p>
+          </div>
+          <label className="relative inline-flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              checked={settings.approvalEmailEnabled}
+              onChange={(e) =>
+                handleInputChange("approvalEmailEnabled", e.target.checked)
+              }
+              className="sr-only peer"
+            />
+            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
           </label>
-          <input
-            type="number"
-            value={settings.sessionTimeout}
-            onChange={(e) =>
-              handleInputChange("sessionTimeout", parseInt(e.target.value))
-            }
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            min="5"
-            max="1440"
-          />
+        </div>
+
+        <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+          <div>
+            <h3 className="font-medium text-gray-900">Sales Notifications</h3>
+            <p className="text-sm text-gray-600">
+              Email sellers about new sales
+            </p>
+          </div>
+          <label className="relative inline-flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              checked={settings.salesNotificationEnabled}
+              onChange={(e) =>
+                handleInputChange("salesNotificationEnabled", e.target.checked)
+              }
+              className="sr-only peer"
+            />
+            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+          </label>
+        </div>
+
+        <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+          <div>
+            <h3 className="font-medium text-gray-900">Monthly Reports</h3>
+            <p className="text-sm text-gray-600">
+              Send monthly performance reports
+            </p>
+          </div>
+          <label className="relative inline-flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              checked={settings.monthlyReportEnabled}
+              onChange={(e) =>
+                handleInputChange("monthlyReportEnabled", e.target.checked)
+              }
+              className="sr-only peer"
+            />
+            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+          </label>
         </div>
       </div>
     </div>
@@ -516,7 +475,7 @@ const SettingsManager = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Primary Color
+            Primary Brand Color
           </label>
           <div className="flex items-center space-x-2">
             <input
@@ -573,115 +532,233 @@ const SettingsManager = () => {
             value={settings.logoUrl}
             onChange={(e) => handleInputChange("logoUrl", e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="https://yoursite.com/logo.png"
+            placeholder="https://your-platform.com/logo.png"
           />
         </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Favicon URL
+            Brand Font
+          </label>
+          <select
+            value={settings.brandFont}
+            onChange={(e) => handleInputChange("brandFont", e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="Inter">Inter (Default)</option>
+            <option value="Roboto">Roboto</option>
+            <option value="Open Sans">Open Sans</option>
+            <option value="Lato">Lato</option>
+            <option value="Montserrat">Montserrat</option>
+            <option value="Poppins">Poppins</option>
+          </select>
+        </div>
+      </div>
+
+      <div className="bg-gray-50 p-4 rounded-lg">
+        <h4 className="font-medium text-gray-900 mb-3">Color Preview</h4>
+        <div className="flex space-x-4">
+          <div
+            className="w-16 h-16 rounded-lg border"
+            style={{ backgroundColor: settings.primaryColor }}
+            title="Primary Color"
+          ></div>
+          <div
+            className="w-16 h-16 rounded-lg border"
+            style={{ backgroundColor: settings.secondaryColor }}
+            title="Secondary Color"
+          ></div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderSEOSettings = () => (
+    <div className="space-y-6">
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Meta Title
+        </label>
+        <input
+          type="text"
+          value={settings.metaTitle}
+          onChange={(e) => handleInputChange("metaTitle", e.target.value)}
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          placeholder="Your Seller Platform Title"
+          maxLength={60}
+        />
+        <p className="text-xs text-gray-500 mt-1">
+          {settings.metaTitle.length}/60 characters (recommended: 50-60)
+        </p>
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Meta Description
+        </label>
+        <textarea
+          value={settings.metaDescription}
+          onChange={(e) => handleInputChange("metaDescription", e.target.value)}
+          rows={3}
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          placeholder="Brief description for search engines"
+          maxLength={160}
+        />
+        <p className="text-xs text-gray-500 mt-1">
+          {settings.metaDescription.length}/160 characters (recommended:
+          150-160)
+        </p>
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Meta Keywords
+        </label>
+        <input
+          type="text"
+          value={settings.metaKeywords}
+          onChange={(e) => handleInputChange("metaKeywords", e.target.value)}
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          placeholder="sell online, e-commerce, marketplace, sellers"
+        />
+        <p className="text-xs text-gray-500 mt-1">
+          Comma-separated keywords relevant to your platform
+        </p>
+      </div>
+    </div>
+  );
+
+  const renderSecuritySettings = () => (
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Minimum Password Length
           </label>
           <input
-            type="url"
-            value={settings.faviconUrl}
-            onChange={(e) => handleInputChange("faviconUrl", e.target.value)}
+            type="number"
+            value={settings.passwordMinLength}
+            onChange={(e) =>
+              handleInputChange("passwordMinLength", parseInt(e.target.value))
+            }
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="https://yoursite.com/favicon.ico"
+            min="6"
+            max="20"
           />
         </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Session Timeout (minutes)
+          </label>
+          <input
+            type="number"
+            value={settings.sessionTimeout}
+            onChange={(e) =>
+              handleInputChange("sessionTimeout", parseInt(e.target.value))
+            }
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            min="5"
+            max="1440"
+          />
+        </div>
+      </div>
+
+      <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+        <div>
+          <h3 className="font-medium text-gray-900">
+            Two-Factor Authentication
+          </h3>
+          <p className="text-sm text-gray-600">
+            Require 2FA for all seller accounts
+          </p>
+        </div>
+        <label className="relative inline-flex items-center cursor-pointer">
+          <input
+            type="checkbox"
+            checked={settings.twoFactorRequired}
+            onChange={(e) =>
+              handleInputChange("twoFactorRequired", e.target.checked)
+            }
+            className="sr-only peer"
+          />
+          <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+        </label>
       </div>
     </div>
   );
 
   const renderNotificationSettings = () => (
     <div className="space-y-6">
-      <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-        <div>
-          <h3 className="font-medium text-gray-900">Email Notifications</h3>
-          <p className="text-sm text-gray-600">Receive email notifications</p>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+          <div>
+            <h3 className="font-medium text-gray-900">Email Notifications</h3>
+            <p className="text-sm text-gray-600">System email notifications</p>
+          </div>
+          <label className="relative inline-flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              checked={settings.emailNotifications}
+              onChange={(e) =>
+                handleInputChange("emailNotifications", e.target.checked)
+              }
+              className="sr-only peer"
+            />
+            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+          </label>
         </div>
-        <label className="relative inline-flex items-center cursor-pointer">
-          <input
-            type="checkbox"
-            checked={settings.emailNotifications}
-            onChange={(e) =>
-              handleInputChange("emailNotifications", e.target.checked)
-            }
-            className="sr-only peer"
-          />
-          <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-        </label>
-      </div>
 
-      <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-        <div>
-          <h3 className="font-medium text-gray-900">New User Notifications</h3>
-          <p className="text-sm text-gray-600">
-            Get notified when new users register
-          </p>
+        <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+          <div>
+            <h3 className="font-medium text-gray-900">Push Notifications</h3>
+            <p className="text-sm text-gray-600">Browser push notifications</p>
+          </div>
+          <label className="relative inline-flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              checked={settings.pushNotifications}
+              onChange={(e) =>
+                handleInputChange("pushNotifications", e.target.checked)
+              }
+              className="sr-only peer"
+            />
+            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+          </label>
         </div>
-        <label className="relative inline-flex items-center cursor-pointer">
-          <input
-            type="checkbox"
-            checked={settings.newUserNotifications}
-            onChange={(e) =>
-              handleInputChange("newUserNotifications", e.target.checked)
-            }
-            className="sr-only peer"
-          />
-          <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-        </label>
-      </div>
-
-      <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-        <div>
-          <h3 className="font-medium text-gray-900">System Alerts</h3>
-          <p className="text-sm text-gray-600">
-            Receive system maintenance alerts
-          </p>
-        </div>
-        <label className="relative inline-flex items-center cursor-pointer">
-          <input
-            type="checkbox"
-            checked={settings.systemAlerts}
-            onChange={(e) =>
-              handleInputChange("systemAlerts", e.target.checked)
-            }
-            className="sr-only peer"
-          />
-          <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-        </label>
       </div>
     </div>
   );
 
   const renderTabContent = () => {
     switch (activeTab) {
-      case "general":
-        return renderGeneralSettings();
-      case "seo":
-        return renderSEOSettings();
-      case "social":
-        return renderSocialSettings();
+      case "platform":
+        return renderPlatformSettings();
+      case "commission":
+        return renderCommissionSettings();
       case "email":
         return renderEmailSettings();
-      case "security":
-        return renderSecuritySettings();
       case "appearance":
         return renderAppearanceSettings();
+      case "seo":
+        return renderSEOSettings();
+      case "security":
+        return renderSecuritySettings();
       case "notifications":
         return renderNotificationSettings();
       default:
-        return renderGeneralSettings();
+        return renderPlatformSettings();
     }
   };
 
   return (
     <div className="max-w-6xl mx-auto p-6">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Settings</h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          Platform Settings
+        </h1>
         <p className="text-gray-600">
-          Manage your website settings and configurations
+          Configure your seller platform settings and preferences
         </p>
       </div>
 
@@ -741,4 +818,4 @@ const SettingsManager = () => {
   );
 };
 
-export default SettingsManager;
+export default SellerSettingsManager;
