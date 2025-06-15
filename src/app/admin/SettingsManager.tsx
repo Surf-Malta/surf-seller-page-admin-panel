@@ -117,7 +117,7 @@ const SellerSettingsManager = () => {
 
   const renderPlatformSettings = () => (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Platform Name
@@ -126,7 +126,7 @@ const SellerSettingsManager = () => {
             type="text"
             value={settings.platformName}
             onChange={(e) => handleInputChange("platformName", e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
             placeholder="Your Seller Platform"
           />
         </div>
@@ -139,7 +139,7 @@ const SellerSettingsManager = () => {
             type="url"
             value={settings.platformUrl}
             onChange={(e) => handleInputChange("platformUrl", e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
             placeholder="https://your-platform.com"
           />
         </div>
@@ -155,12 +155,12 @@ const SellerSettingsManager = () => {
             handleInputChange("platformDescription", e.target.value)
           }
           rows={3}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
           placeholder="Brief description of your seller platform"
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Support Email
@@ -169,7 +169,7 @@ const SellerSettingsManager = () => {
             type="email"
             value={settings.supportEmail}
             onChange={(e) => handleInputChange("supportEmail", e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
             placeholder="support@your-platform.com"
           />
         </div>
@@ -184,23 +184,23 @@ const SellerSettingsManager = () => {
             onChange={(e) =>
               handleInputChange("supportedCountries", e.target.value)
             }
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
             placeholder="US,CA,UK,AU"
           />
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-          <div>
-            <h3 className="font-medium text-gray-900">
+          <div className="min-w-0 flex-1">
+            <h3 className="font-medium text-gray-900 text-sm sm:text-base">
               Instant Seller Approval
             </h3>
-            <p className="text-sm text-gray-600">
+            <p className="text-xs sm:text-sm text-gray-600">
               Allow sellers to start selling immediately
             </p>
           </div>
-          <label className="relative inline-flex items-center cursor-pointer">
+          <label className="relative inline-flex items-center cursor-pointer ml-4 flex-shrink-0">
             <input
               type="checkbox"
               checked={settings.allowInstantApproval}
@@ -214,15 +214,15 @@ const SellerSettingsManager = () => {
         </div>
 
         <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-          <div>
-            <h3 className="font-medium text-gray-900">
+          <div className="min-w-0 flex-1">
+            <h3 className="font-medium text-gray-900 text-sm sm:text-base">
               Business Verification Required
             </h3>
-            <p className="text-sm text-gray-600">
+            <p className="text-xs sm:text-sm text-gray-600">
               Require business documents for approval
             </p>
           </div>
-          <label className="relative inline-flex items-center cursor-pointer">
+          <label className="relative inline-flex items-center cursor-pointer ml-4 flex-shrink-0">
             <input
               type="checkbox"
               checked={settings.requireBusinessVerification}
@@ -251,7 +251,7 @@ const SellerSettingsManager = () => {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 sm:gap-6">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Commission Rate (%)
@@ -263,12 +263,14 @@ const SellerSettingsManager = () => {
               onChange={(e) =>
                 handleInputChange("commissionRate", parseFloat(e.target.value))
               }
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 pr-8 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
               min="0"
               max="50"
               step="0.1"
             />
-            <span className="absolute right-3 top-2 text-gray-500">%</span>
+            <span className="absolute right-3 top-2 text-gray-500 text-sm">
+              %
+            </span>
           </div>
           <p className="text-xs text-gray-500 mt-1">
             Percentage taken from each sale
@@ -286,12 +288,14 @@ const SellerSettingsManager = () => {
               onChange={(e) =>
                 handleInputChange("processingFee", parseFloat(e.target.value))
               }
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 pr-8 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
               min="0"
               max="10"
               step="0.1"
             />
-            <span className="absolute right-3 top-2 text-gray-500">%</span>
+            <span className="absolute right-3 top-2 text-gray-500 text-sm">
+              %
+            </span>
           </div>
           <p className="text-xs text-gray-500 mt-1">
             Credit card processing fees
@@ -303,14 +307,16 @@ const SellerSettingsManager = () => {
             Monthly Subscription Fee ($)
           </label>
           <div className="relative">
-            <span className="absolute left-3 top-2 text-gray-500">$</span>
+            <span className="absolute left-3 top-2 text-gray-500 text-sm">
+              $
+            </span>
             <input
               type="number"
               value={settings.monthlyFee}
               onChange={(e) =>
                 handleInputChange("monthlyFee", parseFloat(e.target.value))
               }
-              className="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
               min="0"
               step="0.01"
             />
@@ -325,14 +331,16 @@ const SellerSettingsManager = () => {
             Listing Fee ($)
           </label>
           <div className="relative">
-            <span className="absolute left-3 top-2 text-gray-500">$</span>
+            <span className="absolute left-3 top-2 text-gray-500 text-sm">
+              $
+            </span>
             <input
               type="number"
               value={settings.listingFee}
               onChange={(e) =>
                 handleInputChange("listingFee", parseFloat(e.target.value))
               }
-              className="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
               min="0"
               step="0.01"
             />
@@ -342,7 +350,7 @@ const SellerSettingsManager = () => {
       </div>
 
       <div className="bg-gray-50 p-4 rounded-lg">
-        <h4 className="font-medium text-gray-900 mb-3">
+        <h4 className="font-medium text-gray-900 mb-3 text-sm sm:text-base">
           Fee Calculator Preview
         </h4>
         <div className="space-y-2 text-sm">
@@ -386,93 +394,63 @@ const SellerSettingsManager = () => {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-          <div>
-            <h3 className="font-medium text-gray-900">Welcome Email</h3>
-            <p className="text-sm text-gray-600">
-              Send welcome email to new sellers
-            </p>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+        {[
+          {
+            key: "welcomeEmailEnabled",
+            title: "Welcome Email",
+            description: "Send welcome email to new sellers",
+          },
+          {
+            key: "approvalEmailEnabled",
+            title: "Approval Email",
+            description: "Notify sellers when approved",
+          },
+          {
+            key: "salesNotificationEnabled",
+            title: "Sales Notifications",
+            description: "Email sellers about new sales",
+          },
+          {
+            key: "monthlyReportEnabled",
+            title: "Monthly Reports",
+            description: "Send monthly performance reports",
+          },
+        ].map((setting) => (
+          <div
+            key={setting.key}
+            className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
+          >
+            <div className="min-w-0 flex-1">
+              <h3 className="font-medium text-gray-900 text-sm sm:text-base">
+                {setting.title}
+              </h3>
+              <p className="text-xs sm:text-sm text-gray-600">
+                {setting.description}
+              </p>
+            </div>
+            <label className="relative inline-flex items-center cursor-pointer ml-4 flex-shrink-0">
+              <input
+                type="checkbox"
+                checked={
+                  settings[setting.key as keyof typeof settings] as boolean
+                }
+                onChange={(e) =>
+                  handleInputChange(setting.key, e.target.checked)
+                }
+                className="sr-only peer"
+              />
+              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+            </label>
           </div>
-          <label className="relative inline-flex items-center cursor-pointer">
-            <input
-              type="checkbox"
-              checked={settings.welcomeEmailEnabled}
-              onChange={(e) =>
-                handleInputChange("welcomeEmailEnabled", e.target.checked)
-              }
-              className="sr-only peer"
-            />
-            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-          </label>
-        </div>
-
-        <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-          <div>
-            <h3 className="font-medium text-gray-900">Approval Email</h3>
-            <p className="text-sm text-gray-600">
-              Notify sellers when approved
-            </p>
-          </div>
-          <label className="relative inline-flex items-center cursor-pointer">
-            <input
-              type="checkbox"
-              checked={settings.approvalEmailEnabled}
-              onChange={(e) =>
-                handleInputChange("approvalEmailEnabled", e.target.checked)
-              }
-              className="sr-only peer"
-            />
-            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-          </label>
-        </div>
-
-        <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-          <div>
-            <h3 className="font-medium text-gray-900">Sales Notifications</h3>
-            <p className="text-sm text-gray-600">
-              Email sellers about new sales
-            </p>
-          </div>
-          <label className="relative inline-flex items-center cursor-pointer">
-            <input
-              type="checkbox"
-              checked={settings.salesNotificationEnabled}
-              onChange={(e) =>
-                handleInputChange("salesNotificationEnabled", e.target.checked)
-              }
-              className="sr-only peer"
-            />
-            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-          </label>
-        </div>
-
-        <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-          <div>
-            <h3 className="font-medium text-gray-900">Monthly Reports</h3>
-            <p className="text-sm text-gray-600">
-              Send monthly performance reports
-            </p>
-          </div>
-          <label className="relative inline-flex items-center cursor-pointer">
-            <input
-              type="checkbox"
-              checked={settings.monthlyReportEnabled}
-              onChange={(e) =>
-                handleInputChange("monthlyReportEnabled", e.target.checked)
-              }
-              className="sr-only peer"
-            />
-            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-          </label>
-        </div>
+        ))}
       </div>
     </div>
   );
 
   const renderAppearanceSettings = () => (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Primary Brand Color
@@ -484,7 +462,7 @@ const SellerSettingsManager = () => {
               onChange={(e) =>
                 handleInputChange("primaryColor", e.target.value)
               }
-              className="w-12 h-10 border border-gray-300 rounded cursor-pointer"
+              className="w-12 h-10 border border-gray-300 rounded cursor-pointer flex-shrink-0"
             />
             <input
               type="text"
@@ -492,7 +470,7 @@ const SellerSettingsManager = () => {
               onChange={(e) =>
                 handleInputChange("primaryColor", e.target.value)
               }
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm min-w-0"
               placeholder="#3B82F6"
             />
           </div>
@@ -509,7 +487,7 @@ const SellerSettingsManager = () => {
               onChange={(e) =>
                 handleInputChange("secondaryColor", e.target.value)
               }
-              className="w-12 h-10 border border-gray-300 rounded cursor-pointer"
+              className="w-12 h-10 border border-gray-300 rounded cursor-pointer flex-shrink-0"
             />
             <input
               type="text"
@@ -517,7 +495,7 @@ const SellerSettingsManager = () => {
               onChange={(e) =>
                 handleInputChange("secondaryColor", e.target.value)
               }
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm min-w-0"
               placeholder="#10B981"
             />
           </div>
@@ -531,7 +509,7 @@ const SellerSettingsManager = () => {
             type="url"
             value={settings.logoUrl}
             onChange={(e) => handleInputChange("logoUrl", e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
             placeholder="https://your-platform.com/logo.png"
           />
         </div>
@@ -543,7 +521,7 @@ const SellerSettingsManager = () => {
           <select
             value={settings.brandFont}
             onChange={(e) => handleInputChange("brandFont", e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
           >
             <option value="Inter">Inter (Default)</option>
             <option value="Roboto">Roboto</option>
@@ -556,15 +534,17 @@ const SellerSettingsManager = () => {
       </div>
 
       <div className="bg-gray-50 p-4 rounded-lg">
-        <h4 className="font-medium text-gray-900 mb-3">Color Preview</h4>
+        <h4 className="font-medium text-gray-900 mb-3 text-sm sm:text-base">
+          Color Preview
+        </h4>
         <div className="flex space-x-4">
           <div
-            className="w-16 h-16 rounded-lg border"
+            className="w-16 h-16 rounded-lg border flex-shrink-0"
             style={{ backgroundColor: settings.primaryColor }}
             title="Primary Color"
           ></div>
           <div
-            className="w-16 h-16 rounded-lg border"
+            className="w-16 h-16 rounded-lg border flex-shrink-0"
             style={{ backgroundColor: settings.secondaryColor }}
             title="Secondary Color"
           ></div>
@@ -583,7 +563,7 @@ const SellerSettingsManager = () => {
           type="text"
           value={settings.metaTitle}
           onChange={(e) => handleInputChange("metaTitle", e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
           placeholder="Your Seller Platform Title"
           maxLength={60}
         />
@@ -600,7 +580,7 @@ const SellerSettingsManager = () => {
           value={settings.metaDescription}
           onChange={(e) => handleInputChange("metaDescription", e.target.value)}
           rows={3}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
           placeholder="Brief description for search engines"
           maxLength={160}
         />
@@ -618,7 +598,7 @@ const SellerSettingsManager = () => {
           type="text"
           value={settings.metaKeywords}
           onChange={(e) => handleInputChange("metaKeywords", e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
           placeholder="sell online, e-commerce, marketplace, sellers"
         />
         <p className="text-xs text-gray-500 mt-1">
@@ -630,7 +610,7 @@ const SellerSettingsManager = () => {
 
   const renderSecuritySettings = () => (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Minimum Password Length
@@ -641,7 +621,7 @@ const SellerSettingsManager = () => {
             onChange={(e) =>
               handleInputChange("passwordMinLength", parseInt(e.target.value))
             }
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
             min="6"
             max="20"
           />
@@ -657,7 +637,7 @@ const SellerSettingsManager = () => {
             onChange={(e) =>
               handleInputChange("sessionTimeout", parseInt(e.target.value))
             }
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
             min="5"
             max="1440"
           />
@@ -665,15 +645,15 @@ const SellerSettingsManager = () => {
       </div>
 
       <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-        <div>
-          <h3 className="font-medium text-gray-900">
+        <div className="min-w-0 flex-1">
+          <h3 className="font-medium text-gray-900 text-sm sm:text-base">
             Two-Factor Authentication
           </h3>
-          <p className="text-sm text-gray-600">
+          <p className="text-xs sm:text-sm text-gray-600">
             Require 2FA for all seller accounts
           </p>
         </div>
-        <label className="relative inline-flex items-center cursor-pointer">
+        <label className="relative inline-flex items-center cursor-pointer ml-4 flex-shrink-0">
           <input
             type="checkbox"
             checked={settings.twoFactorRequired}
@@ -690,42 +670,46 @@ const SellerSettingsManager = () => {
 
   const renderNotificationSettings = () => (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-          <div>
-            <h3 className="font-medium text-gray-900">Email Notifications</h3>
-            <p className="text-sm text-gray-600">System email notifications</p>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+        {[
+          {
+            key: "emailNotifications",
+            title: "Email Notifications",
+            description: "System email notifications",
+          },
+          {
+            key: "pushNotifications",
+            title: "Push Notifications",
+            description: "Browser push notifications",
+          },
+        ].map((setting) => (
+          <div
+            key={setting.key}
+            className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
+          >
+            <div className="min-w-0 flex-1">
+              <h3 className="font-medium text-gray-900 text-sm sm:text-base">
+                {setting.title}
+              </h3>
+              <p className="text-xs sm:text-sm text-gray-600">
+                {setting.description}
+              </p>
+            </div>
+            <label className="relative inline-flex items-center cursor-pointer ml-4 flex-shrink-0">
+              <input
+                type="checkbox"
+                checked={
+                  settings[setting.key as keyof typeof settings] as boolean
+                }
+                onChange={(e) =>
+                  handleInputChange(setting.key, e.target.checked)
+                }
+                className="sr-only peer"
+              />
+              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+            </label>
           </div>
-          <label className="relative inline-flex items-center cursor-pointer">
-            <input
-              type="checkbox"
-              checked={settings.emailNotifications}
-              onChange={(e) =>
-                handleInputChange("emailNotifications", e.target.checked)
-              }
-              className="sr-only peer"
-            />
-            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-          </label>
-        </div>
-
-        <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-          <div>
-            <h3 className="font-medium text-gray-900">Push Notifications</h3>
-            <p className="text-sm text-gray-600">Browser push notifications</p>
-          </div>
-          <label className="relative inline-flex items-center cursor-pointer">
-            <input
-              type="checkbox"
-              checked={settings.pushNotifications}
-              onChange={(e) =>
-                handleInputChange("pushNotifications", e.target.checked)
-              }
-              className="sr-only peer"
-            />
-            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-          </label>
-        </div>
+        ))}
       </div>
     </div>
   );
@@ -752,12 +736,12 @@ const SellerSettingsManager = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
+    <div className="max-w-6xl mx-auto p-4 sm:p-6">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
           Platform Settings
         </h1>
-        <p className="text-gray-600">
+        <p className="text-gray-600 text-sm sm:text-base">
           Configure your seller platform settings and preferences
         </p>
       </div>
@@ -771,28 +755,45 @@ const SellerSettingsManager = () => {
               : "bg-red-50 text-red-800 border border-red-200"
           }`}
         >
-          {message.text}
+          <div className="text-sm break-words">{message.text}</div>
         </div>
       )}
 
       <div className="bg-white shadow-lg rounded-lg overflow-hidden">
         {/* Tab Navigation */}
         <div className="border-b border-gray-200">
-          <nav className="flex overflow-x-auto">
+          {/* Mobile Tab Selector */}
+          <div className="sm:hidden">
+            <select
+              value={activeTab}
+              onChange={(e) => setActiveTab(e.target.value)}
+              className="block w-full px-3 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            >
+              {tabs.map((tab) => (
+                <option key={tab.id} value={tab.id}>
+                  {tab.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Desktop Tab Navigation */}
+          <nav className="hidden sm:flex overflow-x-auto">
             {tabs.map((tab) => {
               const Icon = tab.icon;
               return (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center px-6 py-4 text-sm font-medium border-b-2 whitespace-nowrap ${
+                  className={`flex items-center px-4 lg:px-6 py-4 text-sm font-medium border-b-2 whitespace-nowrap transition-colors ${
                     activeTab === tab.id
                       ? "border-blue-500 text-blue-600"
                       : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
                   }`}
                 >
-                  <Icon className="w-5 h-5 mr-2" />
-                  {tab.name}
+                  <Icon className="w-4 h-4 lg:w-5 lg:h-5 mr-2 flex-shrink-0" />
+                  <span className="hidden lg:inline">{tab.name}</span>
+                  <span className="lg:hidden">{tab.name.split(" ")[0]}</span>
                 </button>
               );
             })}
@@ -800,16 +801,16 @@ const SellerSettingsManager = () => {
         </div>
 
         {/* Tab Content */}
-        <div className="p-6">{renderTabContent()}</div>
+        <div className="p-4 sm:p-6">{renderTabContent()}</div>
 
         {/* Save Button */}
-        <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end">
+        <div className="px-4 sm:px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end">
           <button
             onClick={handleSave}
             disabled={isLoading}
-            className="flex items-center px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center px-4 sm:px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base transition-colors"
           >
-            <Save className="w-5 h-5 mr-2" />
+            <Save className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
             {isLoading ? "Saving..." : "Save Settings"}
           </button>
         </div>

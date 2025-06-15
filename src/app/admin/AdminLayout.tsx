@@ -80,23 +80,27 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <div className="flex items-center justify-between h-16 px-6 border-b border-gray-200">
-          <div className="flex items-center">
-            <Users className="w-8 h-8 text-blue-600 mr-2" />
-            <div>
-              <h1 className="text-lg font-bold text-gray-900">Seller Admin</h1>
-              <p className="text-xs text-gray-500">Platform Management</p>
+        <div className="flex items-center justify-between h-16 px-4 sm:px-6 border-b border-gray-200">
+          <div className="flex items-center min-w-0">
+            <Users className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600 mr-2 flex-shrink-0" />
+            <div className="min-w-0">
+              <h1 className="text-sm sm:text-lg font-bold text-gray-900 truncate">
+                Seller Admin
+              </h1>
+              <p className="text-xs text-gray-500 hidden sm:block">
+                Platform Management
+              </p>
             </div>
           </div>
           <button
             onClick={() => setSidebarOpen(false)}
-            className="lg:hidden p-1 rounded-md hover:bg-gray-100"
+            className="lg:hidden p-1 rounded-md hover:bg-gray-100 flex-shrink-0"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <nav className="mt-6 px-3">
+        <nav className="mt-6 px-3 pb-4 overflow-y-auto flex-1">
           <div className="space-y-1">
             {navigation.map((item) => (
               <Link
@@ -110,15 +114,15 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                 onClick={() => setSidebarOpen(false)}
               >
                 <item.icon
-                  className={`w-5 h-5 mr-3 ${
+                  className={`w-5 h-5 mr-3 flex-shrink-0 ${
                     isActive(item.href)
                       ? "text-blue-600"
                       : "text-gray-400 group-hover:text-gray-600"
                   }`}
                 />
-                <div>
-                  <div>{item.name}</div>
-                  <div className="text-xs text-gray-500">
+                <div className="min-w-0 flex-1">
+                  <div className="truncate">{item.name}</div>
+                  <div className="text-xs text-gray-500 truncate hidden sm:block">
                     {item.description}
                   </div>
                 </div>
@@ -140,8 +144,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <ExternalLink className="w-5 h-5 mr-3 text-gray-400 group-hover:text-gray-600" />
-                <span>View Live Site</span>
+                <ExternalLink className="w-5 h-5 mr-3 text-gray-400 group-hover:text-gray-600 flex-shrink-0" />
+                <span className="truncate">View Live Site</span>
               </Link>
             </div>
           </div>
@@ -154,16 +158,16 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
               </h4>
               <div className="space-y-2 text-xs">
                 <div className="flex items-center justify-between text-blue-800">
-                  <span>Pages Created:</span>
-                  <span className="font-medium">0</span>
+                  <span className="truncate">Pages Created:</span>
+                  <span className="font-medium flex-shrink-0 ml-2">0</span>
                 </div>
                 <div className="flex items-center justify-between text-blue-800">
-                  <span>Content Sections:</span>
-                  <span className="font-medium">0</span>
+                  <span className="truncate">Content Sections:</span>
+                  <span className="font-medium flex-shrink-0 ml-2">0</span>
                 </div>
                 <div className="flex items-center justify-between text-blue-800">
-                  <span>Setup Progress:</span>
-                  <span className="font-medium">0%</span>
+                  <span className="truncate">Setup Progress:</span>
+                  <span className="font-medium flex-shrink-0 ml-2">0%</span>
                 </div>
               </div>
             </div>
@@ -172,38 +176,46 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       </div>
 
       {/* Main content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col overflow-hidden min-w-0">
         {/* Top navigation */}
         <header className="bg-white shadow-sm border-b border-gray-200">
-          <div className="flex items-center justify-between h-16 px-6">
-            <div className="flex items-center">
+          <div className="flex items-center justify-between h-16 px-4 sm:px-6">
+            <div className="flex items-center min-w-0">
               <button
                 onClick={() => setSidebarOpen(true)}
-                className="lg:hidden p-2 rounded-md hover:bg-gray-100"
+                className="lg:hidden p-2 rounded-md hover:bg-gray-100 mr-2 flex-shrink-0"
               >
                 <Menu className="w-5 h-5" />
               </button>
 
               {/* Breadcrumb */}
-              <div className="hidden lg:flex items-center space-x-2 text-sm text-gray-600">
-                <span>Seller Platform</span>
-                <span>/</span>
-                <span className="font-medium text-gray-900">
+              <div className="hidden sm:flex items-center space-x-2 text-sm text-gray-600 min-w-0">
+                <span className="truncate">Seller Platform</span>
+                <span className="text-gray-400">/</span>
+                <span className="font-medium text-gray-900 truncate">
                   {navigation.find((item) => isActive(item.href))?.name ||
                     "Dashboard"}
                 </span>
               </div>
+
+              {/* Mobile breadcrumb */}
+              <div className="sm:hidden text-sm font-medium text-gray-900 truncate">
+                {navigation.find((item) => isActive(item.href))?.name ||
+                  "Dashboard"}
+              </div>
             </div>
 
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 sm:space-x-4 flex-shrink-0">
               {/* Status indicator */}
               <div className="hidden md:flex items-center space-x-2">
                 <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <span className="text-sm text-gray-600">System Online</span>
+                <span className="text-sm text-gray-600 hidden lg:block">
+                  System Online
+                </span>
               </div>
 
               {/* Last updated */}
-              <span className="hidden md:block text-sm text-gray-500">
+              <span className="hidden xl:block text-sm text-gray-500 truncate">
                 Last updated: {new Date().toLocaleTimeString()}
               </span>
             </div>
@@ -212,20 +224,20 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
         {/* Page content */}
         <main className="flex-1 overflow-y-auto">
-          <div className="p-6">{children}</div>
+          <div className="p-4 sm:p-6">{children}</div>
         </main>
 
         {/* Footer */}
-        <footer className="bg-white border-t border-gray-200 px-6 py-3">
-          <div className="flex items-center justify-between">
+        <footer className="bg-white border-t border-gray-200 px-4 sm:px-6 py-3">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
             <div className="text-sm text-gray-500">
               Seller Platform Admin v1.0
             </div>
-            <div className="flex items-center space-x-4 text-sm text-gray-500">
-              <span>Need help?</span>
+            <div className="flex items-center space-x-2 sm:space-x-4 text-sm text-gray-500">
+              <span className="hidden sm:inline">Need help?</span>
               <a
                 href="mailto:support@your-platform.com"
-                className="text-blue-600 hover:text-blue-700"
+                className="text-blue-600 hover:text-blue-700 truncate"
               >
                 Contact Support
               </a>

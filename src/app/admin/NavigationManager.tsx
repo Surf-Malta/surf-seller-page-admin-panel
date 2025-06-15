@@ -214,18 +214,18 @@ export default function NavigationManager() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start space-y-4 sm:space-y-0">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
             Seller Page Navigation
           </h1>
-          <p className="text-gray-600">
+          <p className="text-gray-600 text-sm sm:text-base">
             Manage your seller platform navigation pages
           </p>
         </div>
         <button
           onClick={handleAddNew}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center"
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center sm:justify-start text-sm sm:text-base"
         >
           <Plus className="w-4 h-4 mr-2" />
           Add Page
@@ -234,11 +234,11 @@ export default function NavigationManager() {
 
       {/* Page Templates */}
       {showTemplates && (
-        <div className="bg-blue-50 p-6 rounded-lg border border-blue-200">
+        <div className="bg-blue-50 p-4 sm:p-6 rounded-lg border border-blue-200">
           <h3 className="text-lg font-semibold text-blue-900 mb-4">
             Choose a Page Template
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {SELLER_PAGE_TEMPLATES.map((template) => {
               const Icon = template.icon;
               return (
@@ -248,15 +248,15 @@ export default function NavigationManager() {
                   className="p-4 bg-white border border-blue-200 rounded-lg hover:border-blue-400 hover:shadow-md transition-all text-left"
                 >
                   <div className="flex items-center mb-2">
-                    <Icon className="w-5 h-5 text-blue-600 mr-2" />
-                    <h4 className="font-medium text-gray-900">
+                    <Icon className="w-5 h-5 text-blue-600 mr-2 flex-shrink-0" />
+                    <h4 className="font-medium text-gray-900 truncate">
                       {template.label}
                     </h4>
                   </div>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-gray-600 mb-2">
                     {template.description}
                   </p>
-                  <span className="text-xs text-blue-600 mt-2 block">
+                  <span className="text-xs text-blue-600 block break-all">
                     {template.href}
                   </span>
                 </button>
@@ -276,38 +276,40 @@ export default function NavigationManager() {
 
       {/* Add/Edit Form */}
       {(isAddingNew || editingItem) && !showTemplates && (
-        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+        <div className="bg-white p-4 sm:p-6 rounded-lg shadow-sm border border-gray-200">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">
             {editingItem ? "Edit Page" : "Add New Page"}
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Page Name *
-              </label>
-              <input
-                type="text"
-                value={formData.label || ""}
-                onChange={(e) => handleInputChange("label", e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Home, About, Pricing..."
-              />
-            </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div className="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Page Name *
+                </label>
+                <input
+                  type="text"
+                  value={formData.label || ""}
+                  onChange={(e) => handleInputChange("label", e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                  placeholder="Home, About, Pricing..."
+                />
+              </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Page URL *
-              </label>
-              <input
-                type="text"
-                value={formData.href || ""}
-                onChange={(e) =>
-                  handleInputChange("href", validateUrl(e.target.value))
-                }
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="/about, /pricing, /signup..."
-              />
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Page URL *
+                </label>
+                <input
+                  type="text"
+                  value={formData.href || ""}
+                  onChange={(e) =>
+                    handleInputChange("href", validateUrl(e.target.value))
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                  placeholder="/about, /pricing, /signup..."
+                />
+              </div>
             </div>
 
             <div>
@@ -318,9 +320,9 @@ export default function NavigationManager() {
                 type="number"
                 value={formData.order || 0}
                 onChange={(e) =>
-                  handleInputChange("order", parseInt(e.target.value))
+                  handleInputChange("order", parseInt(e.target.value) || 0)
                 }
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
                 min="0"
               />
               <p className="text-xs text-gray-500 mt-1">
@@ -337,24 +339,24 @@ export default function NavigationManager() {
                 onChange={(e) =>
                   handleInputChange("description", e.target.value)
                 }
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
                 placeholder="Brief description of this page's purpose..."
                 rows={3}
               />
             </div>
           </div>
 
-          <div className="flex justify-end space-x-3 mt-6">
+          <div className="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-3 mt-6">
             <button
               onClick={handleCancel}
-              className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors flex items-center"
+              className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center text-sm"
             >
               <X className="w-4 h-4 mr-2" />
               Cancel
             </button>
             <button
               onClick={handleSave}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center"
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center text-sm"
             >
               <Save className="w-4 h-4 mr-2" />
               Save Page
@@ -365,7 +367,7 @@ export default function NavigationManager() {
 
       {/* Navigation Items List */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-        <div className="px-6 py-4 border-b border-gray-200">
+        <div className="px-4 sm:px-6 py-4 border-b border-gray-200">
           <h2 className="text-lg font-semibold text-gray-900">
             Current Navigation Pages ({navigationItems.length})
           </h2>
@@ -373,13 +375,15 @@ export default function NavigationManager() {
 
         <div className="divide-y divide-gray-200">
           {navigationItems.length === 0 ? (
-            <div className="px-6 py-8 text-center text-gray-500">
+            <div className="px-4 sm:px-6 py-8 text-center text-gray-500">
               <Globe className="w-12 h-12 mx-auto mb-4 text-gray-300" />
               <h3 className="text-lg font-medium mb-2">No Pages Yet</h3>
-              <p className="mb-4">Start by adding your first navigation page</p>
+              <p className="mb-4 text-sm sm:text-base px-4">
+                Start by adding your first navigation page
+              </p>
               <button
                 onClick={handleAddNew}
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm"
               >
                 Add Your First Page
               </button>
@@ -388,28 +392,31 @@ export default function NavigationManager() {
             [...navigationItems]
               .sort((a, b) => a.order - b.order)
               .map((item, index) => (
-                <div key={item.id} className="px-6 py-4 hover:bg-gray-50">
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-3">
-                        <span className="inline-flex items-center justify-center w-6 h-6 text-xs font-medium text-blue-600 bg-blue-100 rounded-full">
+                <div
+                  key={item.id}
+                  className="px-4 sm:px-6 py-4 hover:bg-gray-50"
+                >
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center space-x-3 mb-1">
+                        <span className="inline-flex items-center justify-center w-6 h-6 text-xs font-medium text-blue-600 bg-blue-100 rounded-full flex-shrink-0">
                           {index + 1}
                         </span>
-                        <h3 className="text-lg font-medium text-gray-900">
+                        <h3 className="text-base sm:text-lg font-medium text-gray-900 truncate">
                           {item.label}
                         </h3>
-                        <span className="text-sm text-blue-600 bg-blue-100 px-2 py-1 rounded">
+                        <span className="text-xs sm:text-sm text-blue-600 bg-blue-100 px-2 py-1 rounded whitespace-nowrap">
                           {item.href}
                         </span>
                       </div>
                       {item.description && (
-                        <p className="text-sm text-gray-600 mt-1 ml-9">
+                        <p className="text-sm text-gray-600 ml-9 break-words">
                           {item.description}
                         </p>
                       )}
                     </div>
 
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center space-x-2 sm:ml-4 flex-shrink-0">
                       <button
                         onClick={() => handleEdit(item)}
                         className="p-2 text-gray-400 hover:text-blue-600 transition-colors"
@@ -434,30 +441,30 @@ export default function NavigationManager() {
 
       {/* Quick Setup Guide */}
       {navigationItems.length === 0 && (
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 sm:p-6">
           <h3 className="text-lg font-semibold text-yellow-800 mb-2">
             Quick Setup Guide
           </h3>
-          <p className="text-yellow-700 mb-4">
+          <p className="text-yellow-700 mb-4 text-sm sm:text-base">
             Get started quickly with these essential pages for your seller
             platform:
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
             <div className="flex items-center text-yellow-700">
-              <div className="w-2 h-2 bg-yellow-500 rounded-full mr-2"></div>
-              Home - Main landing page
+              <div className="w-2 h-2 bg-yellow-500 rounded-full mr-2 flex-shrink-0"></div>
+              <span>Home - Main landing page</span>
             </div>
             <div className="flex items-center text-yellow-700">
-              <div className="w-2 h-2 bg-yellow-500 rounded-full mr-2"></div>
-              How It Works - Getting started guide
+              <div className="w-2 h-2 bg-yellow-500 rounded-full mr-2 flex-shrink-0"></div>
+              <span>How It Works - Getting started guide</span>
             </div>
             <div className="flex items-center text-yellow-700">
-              <div className="w-2 h-2 bg-yellow-500 rounded-full mr-2"></div>
-              Pricing - Commission and fees
+              <div className="w-2 h-2 bg-yellow-500 rounded-full mr-2 flex-shrink-0"></div>
+              <span>Pricing - Commission and fees</span>
             </div>
             <div className="flex items-center text-yellow-700">
-              <div className="w-2 h-2 bg-yellow-500 rounded-full mr-2"></div>
-              Join Now - Seller registration
+              <div className="w-2 h-2 bg-yellow-500 rounded-full mr-2 flex-shrink-0"></div>
+              <span>Join Now - Seller registration</span>
             </div>
           </div>
         </div>
