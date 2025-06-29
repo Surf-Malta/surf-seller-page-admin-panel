@@ -36,6 +36,12 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       description: "Overview and quick actions",
     },
     {
+      name: "Sellers",
+      href: "/admin/sellers",
+      icon: Users,
+      description: "Manage seller registrations",
+    },
+    {
       name: "Pages",
       href: "/admin/navigation",
       icon: Navigation,
@@ -158,16 +164,16 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
               </h4>
               <div className="space-y-2 text-xs">
                 <div className="flex items-center justify-between text-blue-800">
+                  <span className="truncate">Registered Sellers:</span>
+                  <span className="font-medium flex-shrink-0 ml-2">0</span>
+                </div>
+                <div className="flex items-center justify-between text-blue-800">
                   <span className="truncate">Pages Created:</span>
                   <span className="font-medium flex-shrink-0 ml-2">0</span>
                 </div>
                 <div className="flex items-center justify-between text-blue-800">
                   <span className="truncate">Content Sections:</span>
                   <span className="font-medium flex-shrink-0 ml-2">0</span>
-                </div>
-                <div className="flex items-center justify-between text-blue-800">
-                  <span className="truncate">Setup Progress:</span>
-                  <span className="font-medium flex-shrink-0 ml-2">0%</span>
                 </div>
               </div>
             </div>

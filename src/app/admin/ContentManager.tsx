@@ -883,7 +883,7 @@ export default function RealTimeContentManager() {
     const currentNavItem = navigationItems.find(
       (item) => item.id === activeNavItem
     );
-    const previewUrl = `http://localhost:3001${currentNavItem?.href || "/"}`;
+    const previewUrl = `https://surf-seller-pagee-git-main-vellankivasudeva-gmailcoms-projects.vercel.app/${currentNavItem?.href || "/"}`;
 
     // Get responsive dimensions based on device type
     const getPreviewDimensions = () => {
