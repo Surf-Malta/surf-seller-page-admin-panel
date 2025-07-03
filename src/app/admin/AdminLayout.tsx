@@ -1,3 +1,4 @@
+// src/app/admin/AdminLayout.tsx (Updated)
 "use client";
 
 import { useState, useEffect } from "react";
@@ -13,6 +14,7 @@ import {
   ExternalLink,
   Users,
   DollarSign,
+  Home,
 } from "lucide-react";
 
 interface AdminLayoutProps {
@@ -34,6 +36,12 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       href: "/admin",
       icon: LayoutDashboard,
       description: "Overview and quick actions",
+    },
+    {
+      name: "Homepage",
+      href: "/admin/homepage",
+      icon: Home,
+      description: "Manage homepage content sections",
     },
     {
       name: "Sellers",

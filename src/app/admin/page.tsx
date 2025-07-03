@@ -1,3 +1,4 @@
+// src/app/admin/page.tsx (Updated Dashboard)
 "use client";
 
 import { useSelector } from "react-redux";
@@ -14,6 +15,7 @@ import {
   Edit,
   Plus,
   CheckCircle,
+  Home,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -32,6 +34,13 @@ export default function AdminDashboard() {
 
   const stats = [
     {
+      name: "Homepage Sections",
+      value: "7", // Default sections
+      icon: Home,
+      color: "bg-purple-500",
+      description: "Dynamic content sections",
+    },
+    {
       name: "Navigation Pages",
       value: totalPages,
       icon: Navigation,
@@ -46,13 +55,6 @@ export default function AdminDashboard() {
       description: "Across all pages",
     },
     {
-      name: "Setup Progress",
-      value: `${Math.round((totalPages / 6) * 100)}%`,
-      icon: Activity,
-      color: "bg-purple-500",
-      description: "Recommended 6 pages",
-    },
-    {
       name: "Live Status",
       value: hasHomePage ? "Active" : "Setup",
       icon: Globe,
@@ -62,6 +64,14 @@ export default function AdminDashboard() {
   ];
 
   const quickActions = [
+    {
+      title: "Manage Homepage",
+      description: "Edit homepage content and sections",
+      href: "/admin/homepage",
+      icon: Home,
+      color: "bg-purple-50 text-purple-700 border-purple-200",
+      buttonColor: "bg-purple-600 hover:bg-purple-700",
+    },
     {
       title: "Manage Pages",
       description: "Add, edit, or remove navigation pages",
@@ -83,17 +93,22 @@ export default function AdminDashboard() {
       description: "View your live seller platform",
       href: "https://surf-seller-page.vercel.app",
       icon: Eye,
-      color: "bg-purple-50 text-purple-700 border-purple-200",
-      buttonColor: "bg-purple-600 hover:bg-purple-700",
+      color: "bg-gray-50 text-gray-700 border-gray-200",
+      buttonColor: "bg-gray-600 hover:bg-gray-700",
       external: true,
     },
   ];
 
   const setupChecklist = [
     {
-      title: "Create Home Page",
+      title: "Setup Homepage Content",
+      completed: true, // Assuming default content exists
+      description: "Configure hero, success stories, and other sections",
+    },
+    {
+      title: "Create Navigation Pages",
       completed: hasHomePage,
-      description: "Main landing page for your seller platform",
+      description: "Add navigation pages for your seller platform",
     },
     {
       title: "Add Pricing Page",
@@ -106,11 +121,6 @@ export default function AdminDashboard() {
       description: "Enable seller sign-up page",
     },
     {
-      title: "Add Content Sections",
-      completed: false, // Would check actual content
-      description: "Create hero, features, and testimonial sections",
-    },
-    {
       title: "Configure Settings",
       completed: false,
       description: "Setup site metadata and configurations",
@@ -119,19 +129,19 @@ export default function AdminDashboard() {
 
   const recentActivity = [
     {
-      action: "Navigation system initialized",
+      action: "Homepage manager initialized",
       time: "Just now",
+      color: "bg-purple-500",
+    },
+    {
+      action: "Navigation system initialized",
+      time: "2 mins ago",
       color: "bg-blue-500",
     },
     {
       action: "Admin panel accessed",
-      time: "2 mins ago",
-      color: "bg-green-500",
-    },
-    {
-      action: "Database connection established",
       time: "5 mins ago",
-      color: "bg-purple-500",
+      color: "bg-green-500",
     },
   ];
 
@@ -235,7 +245,7 @@ export default function AdminDashboard() {
         <h2 className="text-lg font-semibold text-gray-900 mb-4">
           Quick Actions
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
           {quickActions.map((action) => (
             <div
               key={action.title}
@@ -367,16 +377,16 @@ export default function AdminDashboard() {
           <h2 className="text-lg font-semibold text-gray-900 mb-4">
             Getting Started with Your Seller Platform
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
             <div className="text-center p-4 border border-gray-200 rounded-lg">
-              <div className="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-3 text-sm font-semibold">
+              <div className="w-8 h-8 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mx-auto mb-3 text-sm font-semibold">
                 1
               </div>
               <h3 className="font-medium text-gray-900 mb-2 text-sm sm:text-base">
-                Create Pages
+                Setup Homepage
               </h3>
               <p className="text-xs sm:text-sm text-gray-600">
-                Add navigation pages for your seller platform
+                Configure homepage content sections
               </p>
             </div>
             <div className="text-center p-4 border border-gray-200 rounded-lg">
@@ -384,32 +394,43 @@ export default function AdminDashboard() {
                 2
               </div>
               <h3 className="font-medium text-gray-900 mb-2 text-sm sm:text-base">
-                Add Content
+                Create Pages
               </h3>
               <p className="text-xs sm:text-sm text-gray-600">
-                Create compelling content sections for each page
+                Add navigation pages for your platform
               </p>
             </div>
             <div className="text-center p-4 border border-gray-200 rounded-lg">
-              <div className="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-3 text-sm font-semibold">
+              <div className="w-8 h-8 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-3 text-sm font-semibold">
                 3
+              </div>
+              <h3 className="font-medium text-gray-900 mb-2 text-sm sm:text-base">
+                Add Content
+              </h3>
+              <p className="text-xs sm:text-sm text-gray-600">
+                Create compelling content sections
+              </p>
+            </div>
+            <div className="text-center p-4 border border-gray-200 rounded-lg">
+              <div className="w-8 h-8 bg-yellow-100 text-yellow-600 rounded-full flex items-center justify-center mx-auto mb-3 text-sm font-semibold">
+                4
               </div>
               <h3 className="font-medium text-gray-900 mb-2 text-sm sm:text-base">
                 Customize
               </h3>
               <p className="text-xs sm:text-sm text-gray-600">
-                Adjust settings and appearance to match your brand
+                Adjust settings and appearance
               </p>
             </div>
             <div className="text-center p-4 border border-gray-200 rounded-lg">
-              <div className="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-3 text-sm font-semibold">
-                4
+              <div className="w-8 h-8 bg-gray-100 text-gray-600 rounded-full flex items-center justify-center mx-auto mb-3 text-sm font-semibold">
+                5
               </div>
               <h3 className="font-medium text-gray-900 mb-2 text-sm sm:text-base">
                 Launch
               </h3>
               <p className="text-xs sm:text-sm text-gray-600">
-                Preview and publish your seller platform
+                Preview and publish your platform
               </p>
             </div>
           </div>
