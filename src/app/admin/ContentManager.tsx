@@ -883,7 +883,7 @@ export default function RealTimeContentManager() {
     const currentNavItem = navigationItems.find(
       (item) => item.id === activeNavItem
     );
-    const previewUrl = `https://surf-seller-pagee-git-main-vellankivasudeva-gmailcoms-projects.vercel.app/${currentNavItem?.href || "/"}`;
+    const previewUrl = `https://surf-seller-pagee-k6qrdpo71-vellankivasudeva-gmailcoms-projects.vercel.app/${currentNavItem?.href || "/"}`;
 
     // Get responsive dimensions based on device type
     const getPreviewDimensions = () => {
@@ -1281,7 +1281,7 @@ export default function RealTimeContentManager() {
                 const currentNavItem = navigationItems.find(
                   (item) => item.id === activeNavItem
                 );
-                const previewUrl = `http://localhost:3001${
+                const previewUrl = `https://surf-seller-pagee-k6qrdpo71-vellankivasudeva-gmailcoms-projects.vercel.app${
                   currentNavItem?.href || "/"
                 }`;
                 window.open(previewUrl, "_blank");
