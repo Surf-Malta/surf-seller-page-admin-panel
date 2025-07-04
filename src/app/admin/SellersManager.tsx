@@ -17,27 +17,42 @@ import {
   MapPin,
   Calendar,
   Trash2,
+  Building,
+  User,
+  Package,
+  Globe,
 } from "lucide-react";
 
 interface SellerData {
   id: string;
-  boothIdentity: string;
-  boothTitle: string;
+  // Step 1 - Business Information
+  businessName: string;
+  vatType: "individual" | "business";
+  vatNumber?: string;
+  hearAboutSurf: string;
+
+  // Step 2 - Contact & Pickup Address
   firstName: string;
   lastName: string;
+  email: string;
+  phoneNumber: string;
   address: string;
-  addressLine2?: string;
   city: string;
-  state: string;
+  pincode: string;
   country: string;
-  zipCode: string;
-  phoneNumber?: string;
-  shippingMethod: "cover_cost" | "flat_rate" | "exact_amount";
-  advertiseItems: boolean;
-  agreeToTerms: boolean;
-  hearAboutUs: string;
+
+  // Step 3 - Shipping Preferences
+  shippingMethod: "own" | "integrated";
+  shippingType?: "fixed_rate" | "free_delivery";
+  deliveryTime?: "1-2_days" | "2-3_days" | "3-4_days";
+
+  // Step 4 - Visibility & Ads
+  showAdsOnWebsite: boolean;
+
+  // System fields
   status: "pending" | "active" | "suspended";
   createdAt: string;
+  updatedAt: string;
 }
 
 export default function SellersManager() {
@@ -85,7 +100,10 @@ export default function SellersManager() {
     setUpdating(sellerId);
     try {
       await set(ref(realtimeDb, `sellers/${sellerId}/status`), newStatus);
-      // Success feedback could be added here
+      await set(
+        ref(realtimeDb, `sellers/${sellerId}/updatedAt`),
+        new Date().toISOString()
+      );
     } catch (error) {
       console.error("Error updating seller status:", error);
     } finally {
@@ -110,11 +128,12 @@ export default function SellersManager() {
   };
 
   const filteredSellers = sellers.filter((seller) => {
+    const searchLower = searchTerm.toLowerCase();
     const matchesSearch =
-      seller.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      seller.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      seller.boothTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      seller.boothIdentity.toLowerCase().includes(searchTerm.toLowerCase());
+      seller.firstName?.toLowerCase().includes(searchLower) ||
+      seller.lastName?.toLowerCase().includes(searchLower) ||
+      seller.businessName?.toLowerCase().includes(searchLower) ||
+      seller.email?.toLowerCase().includes(searchLower);
 
     const matchesStatus =
       statusFilter === "all" || seller.status === statusFilter;
@@ -148,35 +167,82 @@ export default function SellersManager() {
     }
   };
 
+  const getVatTypeIcon = (vatType: string) => {
+    return vatType === "business" ? (
+      <Building className="w-4 h-4" />
+    ) : (
+      <User className="w-4 h-4" />
+    );
+  };
+
   const getShippingMethodLabel = (method: string) => {
     switch (method) {
-      case "cover_cost":
-        return "Free Shipping";
-      case "flat_rate":
-        return "Flat Rate";
-      case "exact_amount":
-        return "Calculated";
+      case "own":
+        return "Own Shipping";
+      case "integrated":
+        return "Integrated Partner";
       default:
         return method;
     }
   };
 
+  const getShippingTypeLabel = (type?: string) => {
+    switch (type) {
+      case "fixed_rate":
+        return "Fixed Rate";
+      case "free_delivery":
+        return "Free Delivery";
+      default:
+        return "Not specified";
+    }
+  };
+
+  const getDeliveryTimeLabel = (time?: string) => {
+    switch (time) {
+      case "1-2_days":
+        return "1-2 days";
+      case "2-3_days":
+        return "2-3 days";
+      case "3-4_days":
+        return "3-4 days";
+      default:
+        return "Not specified";
+    }
+  };
+
+  const getHearAboutLabel = (source: string) => {
+    const labels = {
+      google_search: "Google Search",
+      social_media: "Social Media",
+      friend_referral: "Friend Referral",
+      online_ad: "Online Advertisement",
+      local_news: "Local News/Media",
+      business_network: "Business Network",
+      other: "Other",
+    };
+    return labels[source as keyof typeof labels] || source;
+  };
+
   const exportData = () => {
     const csvContent = [
       // Header
-      "ID,Name,Booth Title,Booth Identity,Email,Phone,City,State,Country,Status,Shipping Method,Advertise Items,Created At",
+      "ID,Business Name,Contact Name,Email,Phone,VAT Type,VAT Number,City,Country,Shipping Method,Status,Ads Enabled,Hear About,Created At",
       // Data rows
       ...filteredSellers.map(
         (seller) =>
-          `${seller.id},"${seller.firstName} ${seller.lastName}","${
-            seller.boothTitle
-          }","${seller.boothIdentity}","","${seller.phoneNumber || ""}","${
-            seller.city
-          }","${seller.state}","${seller.country}","${
-            seller.status
-          }","${getShippingMethodLabel(seller.shippingMethod)}","${
-            seller.advertiseItems ? "Yes" : "No"
-          }","${seller.createdAt}"`
+          `${seller.id},"${seller.businessName || "No Business Name"}","${
+            seller.firstName || ""
+          } ${seller.lastName || ""}","${seller.email || ""}","${
+            seller.phoneNumber || ""
+          }","${seller.vatType || "individual"}","${seller.vatNumber || ""}","${
+            seller.city || ""
+          }","${seller.country || ""}","${getShippingMethodLabel(
+            seller.shippingMethod || "integrated"
+          )}","${seller.status || "pending"}","${
+            seller.showAdsOnWebsite ? "Yes" : "No"
+          }","${getHearAboutLabel(seller.hearAboutSurf || "")}","${
+            seller.createdAt || ""
+          }"`
       ),
     ].join("\n");
 
@@ -194,6 +260,8 @@ export default function SellersManager() {
     active: sellers.filter((s) => s.status === "active").length,
     pending: sellers.filter((s) => s.status === "pending").length,
     suspended: sellers.filter((s) => s.status === "suspended").length,
+    withAds: sellers.filter((s) => s.showAdsOnWebsite).length,
+    businesses: sellers.filter((s) => s.vatType === "business").length,
   };
 
   if (loading) {
@@ -228,8 +296,8 @@ export default function SellersManager() {
         </div>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {/* Enhanced Stats Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
         <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
           <div className="flex items-center">
             <div className="p-3 rounded-lg bg-blue-100">
@@ -281,6 +349,34 @@ export default function SellersManager() {
               <p className="text-sm font-medium text-gray-600">Suspended</p>
               <p className="text-2xl font-semibold text-gray-900">
                 {stats.suspended}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+          <div className="flex items-center">
+            <div className="p-3 rounded-lg bg-purple-100">
+              <Building className="w-6 h-6 text-purple-600" />
+            </div>
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-600">Businesses</p>
+              <p className="text-2xl font-semibold text-gray-900">
+                {stats.businesses}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+          <div className="flex items-center">
+            <div className="p-3 rounded-lg bg-indigo-100">
+              <Globe className="w-6 h-6 text-indigo-600" />
+            </div>
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-600">With Ads</p>
+              <p className="text-2xl font-semibold text-gray-900">
+                {stats.withAds}
               </p>
             </div>
           </div>
@@ -343,19 +439,19 @@ export default function SellersManager() {
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Seller
+                    Business & Contact
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Booth
+                    VAT Info
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Location
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
+                    Shipping
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Joined
+                    Status
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Actions
@@ -368,55 +464,78 @@ export default function SellersManager() {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold">
-                          {seller.firstName.charAt(0)}
-                          {seller.lastName.charAt(0)}
+                          {seller.businessName?.charAt(0) ||
+                            seller.firstName?.charAt(0) ||
+                            "?"}
                         </div>
                         <div className="ml-4">
                           <div className="text-sm font-medium text-gray-900">
-                            {seller.firstName} {seller.lastName}
+                            {seller.businessName ||
+                              `${seller.firstName} ${seller.lastName}` ||
+                              "No Name"}
                           </div>
                           <div className="text-sm text-gray-500">
-                            {seller.phoneNumber && (
-                              <span className="flex items-center">
-                                <Phone className="w-3 h-3 mr-1" />
-                                {seller.phoneNumber}
-                              </span>
-                            )}
+                            {seller.firstName} {seller.lastName}
+                          </div>
+                          <div className="text-xs text-gray-400">
+                            {seller.email || "No Email"}
                           </div>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">
-                        {seller.boothTitle}
+                      <div className="flex items-center text-sm">
+                        {getVatTypeIcon(seller.vatType || "individual")}
+                        <span className="ml-1 capitalize">
+                          {seller.vatType || "individual"}
+                        </span>
                       </div>
-                      <div className="text-sm text-gray-500">
-                        @{seller.boothIdentity}
-                      </div>
+                      {seller.vatNumber && (
+                        <div className="text-xs text-gray-500 mt-1">
+                          VAT: {seller.vatNumber}
+                        </div>
+                      )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900 flex items-center">
                         <MapPin className="w-3 h-3 mr-1" />
-                        {seller.city}, {seller.state}
+                        {seller.city || "N/A"}
                       </div>
                       <div className="text-sm text-gray-500">
-                        {seller.country}
+                        {seller.country || "N/A"}
                       </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(
-                          seller.status
-                        )}`}
-                      >
-                        {getStatusIcon(seller.status)}
-                        <span className="ml-1 capitalize">{seller.status}</span>
-                      </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900 flex items-center">
-                        <Calendar className="w-3 h-3 mr-1" />
-                        {new Date(seller.createdAt).toLocaleDateString()}
+                        <Package className="w-3 h-3 mr-1" />
+                        {getShippingMethodLabel(
+                          seller.shippingMethod || "integrated"
+                        )}
+                      </div>
+                      {seller.shippingType && (
+                        <div className="text-xs text-gray-500">
+                          {getShippingTypeLabel(seller.shippingType)}
+                        </div>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex flex-col space-y-1">
+                        <span
+                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(
+                            seller.status
+                          )}`}
+                        >
+                          {getStatusIcon(seller.status)}
+                          <span className="ml-1 capitalize">
+                            {seller.status}
+                          </span>
+                        </span>
+                        {seller.showAdsOnWebsite && (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-purple-100 text-purple-700">
+                            <Globe className="w-3 h-3 mr-1" />
+                            Ads On
+                          </span>
+                        )}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -500,15 +619,29 @@ export default function SellersManager() {
         )}
       </div>
 
-      {/* Seller Details Modal */}
+      {/* Enhanced Seller Details Modal */}
       {showDetails && selectedSeller && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-lg shadow-xl max-w-5xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6 border-b border-gray-200">
               <div className="flex items-center justify-between">
-                <h2 className="text-xl font-semibold text-gray-900">
-                  Seller Details
-                </h2>
+                <div className="flex items-center space-x-4">
+                  <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                    {selectedSeller.businessName?.charAt(0) ||
+                      selectedSeller.firstName?.charAt(0) ||
+                      "?"}
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-semibold text-gray-900">
+                      {selectedSeller.businessName ||
+                        `${selectedSeller.firstName} ${selectedSeller.lastName}` ||
+                        "No Name"}
+                    </h2>
+                    <p className="text-gray-600">
+                      {selectedSeller.firstName} {selectedSeller.lastName}
+                    </p>
+                  </div>
+                </div>
                 <button
                   onClick={() => setShowDetails(false)}
                   className="text-gray-400 hover:text-gray-600"
@@ -518,79 +651,173 @@ export default function SellersManager() {
               </div>
             </div>
 
-            <div className="p-6 space-y-6">
-              {/* Basic Info */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-4">
-                    Personal Information
+            <div className="p-6 space-y-8">
+              {/* Business Information */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div className="bg-blue-50 p-6 rounded-lg">
+                  <h3 className="text-lg font-medium text-blue-900 mb-4 flex items-center">
+                    <Building className="w-5 h-5 mr-2" />
+                    Business Information
                   </h3>
                   <div className="space-y-3">
                     <div>
-                      <label className="text-sm font-medium text-gray-500">
-                        Full Name
+                      <label className="text-sm font-medium text-blue-700">
+                        Business Name
                       </label>
-                      <p className="text-sm text-gray-900">
-                        {selectedSeller.firstName} {selectedSeller.lastName}
+                      <p className="text-blue-900">
+                        {selectedSeller.businessName || "Not provided"}
                       </p>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-500">
-                        Phone Number
+                      <label className="text-sm font-medium text-blue-700">
+                        VAT Type
                       </label>
-                      <p className="text-sm text-gray-900">
-                        {selectedSeller.phoneNumber || "Not provided"}
-                      </p>
+                      <div className="flex items-center">
+                        {getVatTypeIcon(selectedSeller.vatType || "individual")}
+                        <span className="ml-2 capitalize text-blue-900">
+                          {selectedSeller.vatType || "individual"}
+                        </span>
+                      </div>
                     </div>
+                    {selectedSeller.vatNumber && (
+                      <div>
+                        <label className="text-sm font-medium text-blue-700">
+                          VAT Number
+                        </label>
+                        <p className="text-blue-900 font-mono">
+                          {selectedSeller.vatNumber}
+                        </p>
+                      </div>
+                    )}
                     <div>
-                      <label className="text-sm font-medium text-gray-500">
-                        Address
+                      <label className="text-sm font-medium text-blue-700">
+                        How they heard about us
                       </label>
-                      <p className="text-sm text-gray-900">
-                        {selectedSeller.address}
-                        {selectedSeller.addressLine2 && (
-                          <>
-                            <br />
-                            {selectedSeller.addressLine2}
-                          </>
-                        )}
-                        <br />
-                        {selectedSeller.city}, {selectedSeller.state}{" "}
-                        {selectedSeller.zipCode}
-                        <br />
-                        {selectedSeller.country}
+                      <p className="text-blue-900">
+                        {getHearAboutLabel(selectedSeller.hearAboutSurf || "")}
                       </p>
                     </div>
                   </div>
                 </div>
 
-                <div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-4">
-                    Booth Information
+                <div className="bg-green-50 p-6 rounded-lg">
+                  <h3 className="text-lg font-medium text-green-900 mb-4 flex items-center">
+                    <User className="w-5 h-5 mr-2" />
+                    Contact Information
                   </h3>
                   <div className="space-y-3">
                     <div>
-                      <label className="text-sm font-medium text-gray-500">
-                        Booth Title
+                      <label className="text-sm font-medium text-green-700">
+                        Full Name
                       </label>
-                      <p className="text-sm text-gray-900">
-                        {selectedSeller.boothTitle}
+                      <p className="text-green-900">
+                        {selectedSeller.firstName || ""}{" "}
+                        {selectedSeller.lastName || ""}
                       </p>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-500">
-                        Booth Identity
+                      <label className="text-sm font-medium text-green-700">
+                        Email
                       </label>
-                      <p className="text-sm text-gray-900">
-                        @{selectedSeller.boothIdentity}
+                      <p className="text-green-900">
+                        {selectedSeller.email || "Not provided"}
                       </p>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-500">
-                        Status
+                      <label className="text-sm font-medium text-green-700">
+                        Phone
+                      </label>
+                      <p className="text-green-900 flex items-center">
+                        <Phone className="w-4 h-4 mr-1" />
+                        {selectedSeller.phoneNumber || "Not provided"}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Address & Shipping */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div className="bg-purple-50 p-6 rounded-lg">
+                  <h3 className="text-lg font-medium text-purple-900 mb-4 flex items-center">
+                    <MapPin className="w-5 h-5 mr-2" />
+                    Pickup Address
+                  </h3>
+                  <div className="space-y-2">
+                    <p className="text-purple-900">
+                      {selectedSeller.address || "Not provided"}
+                    </p>
+                    <p className="text-purple-900">
+                      {selectedSeller.city || "N/A"},{" "}
+                      {selectedSeller.pincode || "N/A"}
+                    </p>
+                    <p className="text-purple-900 font-medium">
+                      {selectedSeller.country || "N/A"}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="bg-orange-50 p-6 rounded-lg">
+                  <h3 className="text-lg font-medium text-orange-900 mb-4 flex items-center">
+                    <Package className="w-5 h-5 mr-2" />
+                    Shipping Preferences
+                  </h3>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="text-sm font-medium text-orange-700">
+                        Shipping Method
+                      </label>
+                      <p className="text-orange-900">
+                        {getShippingMethodLabel(
+                          selectedSeller.shippingMethod || "integrated"
+                        )}
+                      </p>
+                    </div>
+                    {selectedSeller.shippingMethod === "integrated" && (
+                      <>
+                        {selectedSeller.shippingType && (
+                          <div>
+                            <label className="text-sm font-medium text-orange-700">
+                              Shipping Type
+                            </label>
+                            <p className="text-orange-900">
+                              {getShippingTypeLabel(
+                                selectedSeller.shippingType
+                              )}
+                            </p>
+                          </div>
+                        )}
+                        {selectedSeller.deliveryTime && (
+                          <div>
+                            <label className="text-sm font-medium text-orange-700">
+                              Delivery Time
+                            </label>
+                            <p className="text-orange-900">
+                              {getDeliveryTimeLabel(
+                                selectedSeller.deliveryTime
+                              )}
+                            </p>
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Status & Marketing */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div className="bg-gray-50 p-6 rounded-lg">
+                  <h3 className="text-lg font-medium text-gray-900 mb-4">
+                    Account Status
+                  </h3>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="text-sm font-medium text-gray-700">
+                        Current Status
                       </label>
                       <span
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(
+                        className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
                           selectedSeller.status
                         )}`}
                       >
@@ -600,75 +827,79 @@ export default function SellersManager() {
                         </span>
                       </span>
                     </div>
+                    <div>
+                      <label className="text-sm font-medium text-gray-700">
+                        Registration Date
+                      </label>
+                      <p className="text-gray-900 flex items-center">
+                        <Calendar className="w-4 h-4 mr-1" />
+                        {new Date(selectedSeller.createdAt).toLocaleString()}
+                      </p>
+                    </div>
+                    {selectedSeller.updatedAt &&
+                      selectedSeller.updatedAt !== selectedSeller.createdAt && (
+                        <div>
+                          <label className="text-sm font-medium text-gray-700">
+                            Last Updated
+                          </label>
+                          <p className="text-gray-900">
+                            {new Date(
+                              selectedSeller.updatedAt
+                            ).toLocaleString()}
+                          </p>
+                        </div>
+                      )}
+                  </div>
+                </div>
+
+                <div className="bg-indigo-50 p-6 rounded-lg">
+                  <h3 className="text-lg font-medium text-indigo-900 mb-4 flex items-center">
+                    <Globe className="w-5 h-5 mr-2" />
+                    Marketing Preferences
+                  </h3>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="text-sm font-medium text-indigo-700">
+                        Website Advertising
+                      </label>
+                      <div className="flex items-center mt-1">
+                        {selectedSeller.showAdsOnWebsite ? (
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            <CheckCircle className="w-3 h-3 mr-1" />
+                            Enabled
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                            <XCircle className="w-3 h-3 mr-1" />
+                            Disabled
+                          </span>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              {/* Business Preferences */}
-              <div>
-                <h3 className="text-lg font-medium text-gray-900 mb-4">
-                  Business Preferences
+              {/* System Information */}
+              <div className="bg-yellow-50 p-6 rounded-lg">
+                <h3 className="text-lg font-medium text-yellow-900 mb-4">
+                  System Information
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      Shipping Method
-                    </label>
-                    <p className="text-sm text-gray-900">
-                      {getShippingMethodLabel(selectedSeller.shippingMethod)}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      Advertising
-                    </label>
-                    <p className="text-sm text-gray-900">
-                      {selectedSeller.advertiseItems
-                        ? "Opted in to advertising"
-                        : "No advertising"}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      How they heard about us
-                    </label>
-                    <p className="text-sm text-gray-900">
-                      {selectedSeller.hearAboutUs || "Not specified"}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      Terms Agreement
-                    </label>
-                    <p className="text-sm text-gray-900">
-                      {selectedSeller.agreeToTerms
-                        ? "✅ Agreed"
-                        : "❌ Not agreed"}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Registration Details */}
-              <div>
-                <h3 className="text-lg font-medium text-gray-900 mb-4">
-                  Registration Details
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      Registration Date
-                    </label>
-                    <p className="text-sm text-gray-900">
-                      {new Date(selectedSeller.createdAt).toLocaleString()}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
+                    <label className="text-sm font-medium text-yellow-700">
                       Seller ID
                     </label>
-                    <p className="text-sm text-gray-900 font-mono">
+                    <p className="text-yellow-900 font-mono text-sm">
                       {selectedSeller.id}
+                    </p>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-yellow-700">
+                      Database Path
+                    </label>
+                    <p className="text-yellow-900 font-mono text-sm">
+                      sellers/{selectedSeller.id}
                     </p>
                   </div>
                 </div>
