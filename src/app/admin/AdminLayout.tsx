@@ -12,7 +12,7 @@ import {
   X,
   ExternalLink,
   Users,
-  DollarSign,
+  MessageSquare,
 } from "lucide-react";
 
 interface AdminLayoutProps {
@@ -40,6 +40,12 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       href: "/admin/sellers",
       icon: Users,
       description: "Manage seller registrations",
+    },
+    {
+      name: "Enquiries",
+      href: "/admin/enquiries",
+      icon: MessageSquare,
+      description: "Contact inquiries",
     },
     {
       name: "Pages",
