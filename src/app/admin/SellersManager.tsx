@@ -23,6 +23,7 @@ import {
   Globe,
   CreditCard,
   Crown,
+  UserPlus,
 } from "lucide-react";
 
 interface SellerData {
@@ -32,6 +33,7 @@ interface SellerData {
   vatType: "individual" | "business";
   vatNumber?: string;
   hearAboutSurf: string;
+  referredBy?: string; // NEW FIELD
 
   // Step 2 - Contact & Pickup Address
   firstName: string;
@@ -49,7 +51,7 @@ interface SellerData {
   deliveryTime?: "1-2_days" | "2-3_days" | "3-4_days";
 
   // Step 4 - Pricing Plan Selection
-  pricingPlan?: "starter" | "growth" | "pro";
+  pricingPlan?: "starter" | "growth" | "enterprise";
 
   // Step 5 - Visibility & Ads
   showAdsOnWebsite: boolean;
@@ -143,7 +145,8 @@ export default function SellersManager() {
       seller.firstName?.toLowerCase().includes(searchLower) ||
       seller.lastName?.toLowerCase().includes(searchLower) ||
       seller.businessName?.toLowerCase().includes(searchLower) ||
-      seller.email?.toLowerCase().includes(searchLower);
+      seller.email?.toLowerCase().includes(searchLower) ||
+      seller.referredBy?.toLowerCase().includes(searchLower);
 
     const matchesStatus =
       statusFilter === "all" || seller.status === statusFilter;
@@ -226,8 +229,8 @@ export default function SellersManager() {
         return "Starter Plan";
       case "growth":
         return "Growth Plan";
-      case "pro":
-        return "Pro Plan";
+      case "enterprise":
+        return "Enterprise Plan";
       default:
         return "Not specified";
     }
@@ -239,7 +242,7 @@ export default function SellersManager() {
         return "bg-blue-100 text-blue-800";
       case "growth":
         return "bg-green-100 text-green-800";
-      case "pro":
+      case "enterprise":
         return "bg-purple-100 text-purple-800";
       default:
         return "bg-gray-100 text-gray-800";
@@ -252,7 +255,7 @@ export default function SellersManager() {
         return <CreditCard className="w-4 h-4" />;
       case "growth":
         return <Crown className="w-4 h-4" />;
-      case "pro":
+      case "enterprise":
         return <Crown className="w-4 h-4" />;
       default:
         return <CreditCard className="w-4 h-4" />;
@@ -263,10 +266,11 @@ export default function SellersManager() {
     const labels = {
       google_search: "Google Search",
       social_media: "Social Media",
-      friend_referral: "Friend Referral",
+      referral: "Referral",
       online_ad: "Online Advertisement",
       local_news: "Local News/Media",
       business_network: "Business Network",
+      black_friday_campaign: "Black Friday Campaign",
       other: "Other",
     };
     return labels[source as keyof typeof labels] || source;
@@ -275,7 +279,7 @@ export default function SellersManager() {
   const exportData = () => {
     const csvContent = [
       // Header
-      "ID,Business Name,Contact Name,Email,Phone,VAT Type,VAT Number,City,Country,Shipping Method,Pricing Plan,Status,Ads Enabled,Hear About,Created At",
+      "ID,Business Name,Contact Name,Email,Phone,VAT Type,VAT Number,City,Country,Shipping Method,Pricing Plan,Status,Ads Enabled,Hear About,Referred By,Created At",
       // Data rows
       ...filteredSellers.map(
         (seller) =>
@@ -291,7 +295,7 @@ export default function SellersManager() {
             seller.status || "pending"
           }","${seller.showAdsOnWebsite ? "Yes" : "No"}","${getHearAboutLabel(
             seller.hearAboutSurf || ""
-          )}","${seller.createdAt || ""}"`
+          )}","${seller.referredBy || "N/A"}","${seller.createdAt || ""}"`
       ),
     ].join("\n");
 
@@ -313,7 +317,13 @@ export default function SellersManager() {
     businesses: sellers.filter((s) => s.vatType === "business").length,
     starter: sellers.filter((s) => s.pricingPlan === "starter").length,
     growth: sellers.filter((s) => s.pricingPlan === "growth").length,
-    pro: sellers.filter((s) => s.pricingPlan === "pro").length,
+    enterprise: sellers.filter((s) => s.pricingPlan === "enterprise").length,
+    referrals: sellers.filter(
+      (s) => s.hearAboutSurf === "referral" && s.referredBy
+    ).length,
+    blackFriday: sellers.filter(
+      (s) => s.hearAboutSurf === "black_friday_campaign"
+    ).length,
   };
 
   if (loading) {
@@ -409,12 +419,12 @@ export default function SellersManager() {
         <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
           <div className="flex items-center">
             <div className="p-3 rounded-lg bg-purple-100">
-              <Building className="w-6 h-6 text-purple-600" />
+              <UserPlus className="w-6 h-6 text-purple-600" />
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Businesses</p>
+              <p className="text-sm font-medium text-gray-600">Referrals</p>
               <p className="text-2xl font-semibold text-gray-900">
-                {stats.businesses}
+                {stats.referrals}
               </p>
             </div>
           </div>
@@ -422,13 +432,13 @@ export default function SellersManager() {
 
         <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
           <div className="flex items-center">
-            <div className="p-3 rounded-lg bg-indigo-100">
-              <Globe className="w-6 h-6 text-indigo-600" />
+            <div className="p-3 rounded-lg bg-orange-100">
+              <Globe className="w-6 h-6 text-orange-600" />
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">With Ads</p>
+              <p className="text-sm font-medium text-gray-600">Black Friday</p>
               <p className="text-2xl font-semibold text-gray-900">
-                {stats.withAds}
+                {stats.blackFriday}
               </p>
             </div>
           </div>
@@ -436,7 +446,7 @@ export default function SellersManager() {
       </div>
 
       {/* Pricing Plan Stats */}
-      {(stats.starter > 0 || stats.growth > 0 || stats.pro > 0) && (
+      {(stats.starter > 0 || stats.growth > 0 || stats.enterprise > 0) && (
         <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">
             Pricing Plans Distribution
@@ -463,10 +473,10 @@ export default function SellersManager() {
             <div className="flex items-center justify-between p-4 bg-purple-50 rounded-lg">
               <div className="flex items-center">
                 <Crown className="w-5 h-5 text-purple-600 mr-2" />
-                <span className="font-medium text-purple-900">Pro</span>
+                <span className="font-medium text-purple-900">Enterprise</span>
               </div>
               <span className="text-2xl font-bold text-purple-700">
-                {stats.pro}
+                {stats.enterprise}
               </span>
             </div>
           </div>
@@ -538,7 +548,7 @@ export default function SellersManager() {
                     Location
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Plan & Shipping
+                    Plan & Source
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Status
@@ -610,17 +620,16 @@ export default function SellersManager() {
                           </span>
                         </div>
                       )}
-                      <div className="text-sm text-gray-900 flex items-center">
-                        <Package className="w-3 h-3 mr-1" />
-                        {getShippingMethodLabel(
-                          seller.shippingMethod || "integrated"
-                        )}
+                      <div className="text-xs text-gray-600">
+                        {getHearAboutLabel(seller.hearAboutSurf || "")}
                       </div>
-                      {seller.shippingType && (
-                        <div className="text-xs text-gray-500">
-                          {getShippingTypeLabel(seller.shippingType)}
-                        </div>
-                      )}
+                      {seller.hearAboutSurf === "referral" &&
+                        seller.referredBy && (
+                          <div className="flex items-center text-xs text-purple-600 mt-1">
+                            <UserPlus className="w-3 h-3 mr-1" />
+                            {seller.referredBy}
+                          </div>
+                        )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex flex-col space-y-1">
@@ -725,7 +734,7 @@ export default function SellersManager() {
 
       {/* Enhanced Seller Details Modal */}
       {showDetails && selectedSeller && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 overflow-y-auto">
           <div className="bg-white rounded-lg shadow-xl max-w-6xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6 border-b border-gray-200">
               <div className="flex items-center justify-between">
@@ -801,6 +810,22 @@ export default function SellersManager() {
                         {getHearAboutLabel(selectedSeller.hearAboutSurf || "")}
                       </p>
                     </div>
+                    {/* REFERRAL INFORMATION SECTION */}
+                    {selectedSeller.hearAboutSurf === "referral" &&
+                      selectedSeller.referredBy && (
+                        <div className="bg-purple-100 border-2 border-purple-300 p-4 rounded-lg mt-3">
+                          <label className="text-sm font-medium text-purple-700 flex items-center">
+                            <UserPlus className="w-4 h-4 mr-2" />
+                            Referred By
+                          </label>
+                          <p className="text-purple-900 font-semibold text-lg mt-1">
+                            {selectedSeller.referredBy}
+                          </p>
+                          <p className="text-xs text-purple-600 mt-1">
+                            💡 This seller came through a referral
+                          </p>
+                        </div>
+                      )}
                   </div>
                 </div>
 
