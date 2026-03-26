@@ -27,10 +27,11 @@ import {
   Sparkles,
   LayoutTemplate,
   Settings2,
+  Rows,
+  Navigation,
   Image as ImageBtn,
   Type as TextBtn,
   Box,
-  Rows,
   ChevronRight,
   ChevronsLeftRight,
   Grid,
@@ -109,7 +110,6 @@ export function VisualDesigner({ section, isOpen, onClose, onSave }: VisualDesig
     if (section?.content?.settings) setSettings(section.content.settings);
   }, [section, isOpen]);
 
-  if (!isOpen) return null;
 
   const addBlock = (type: Block["type"]) => {
     const id = `id-${Date.now()}`;
@@ -156,9 +156,12 @@ export function VisualDesigner({ section, isOpen, onClose, onSave }: VisualDesig
       const xPercent = (((startX - rect.left) / currentScale + dx) / 12.8);
       const yPixels = (startY - rect.top) / currentScale + dy;
       
+      const block = blocks.find(b => b.id === id);
+      const blockH = block?.h || 100;
+
       handleBlockUpdate(id, { 
         x: Math.max(0, Math.min(100, xPercent)), 
-        y: Math.max(0, yPixels) 
+        y: Math.max(0, Math.min(settings.canvasHeight - blockH, yPixels)) 
       });
     };
     const onUp = () => {
@@ -198,7 +201,25 @@ export function VisualDesigner({ section, isOpen, onClose, onSave }: VisualDesig
         updates.y = initialY + (initialH - newH);
       }
       
-      handleBlockUpdate(id, updates);
+    handleBlockUpdate(id, updates);
+    };
+    const onUp = () => {
+      setIsResizing(false);
+      document.removeEventListener("mousemove", onMove);
+      document.removeEventListener("mouseup", onUp);
+    };
+    document.addEventListener("mousemove", onMove);
+    document.addEventListener("mouseup", onUp);
+  };
+
+  const startCanvasResize = (startY: number) => {
+    setIsResizing(true);
+    const initialHeight = settings.canvasHeight;
+    const currentScale = viewMode === "desktop" ? 1 : viewMode === "tablet" ? 768 / 1280 : 375 / 1280;
+
+    const onMove = (e: MouseEvent) => {
+      const dy = (e.clientY - startY) / currentScale;
+      setSettings(prev => ({ ...prev, canvasHeight: Math.max(200, initialHeight + dy) }));
     };
     const onUp = () => {
       setIsResizing(false);
@@ -228,6 +249,8 @@ export function VisualDesigner({ section, isOpen, onClose, onSave }: VisualDesig
   }, [selectedBlockId, blocks]);
 
   const selectedBlock = blocks.find(b => b.id === selectedBlockId);
+
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 bg-[#080808] flex flex-col font-sans select-none overflow-hidden animate-in fade-in duration-500">
@@ -432,7 +455,18 @@ export function VisualDesigner({ section, isOpen, onClose, onSave }: VisualDesig
                                     <input type="number" value={1280} disabled className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white/20 font-black text-lg cursor-not-allowed opacity-50" />
                                 </div>
                                 <div className="space-y-4">
-                                    <label className="text-[10px] font-black text-white/30 uppercase tracking-[0.3em] block">Height (px)</label>
+                                    <div className="flex justify-between items-center">
+                                       <label className="text-[10px] font-black text-white/30 uppercase tracking-[0.3em] block">Height (px)</label>
+                                       <button 
+                                          onClick={() => {
+                                             const maxHeight = blocks.reduce((max, b) => Math.max(max, b.y + (b.h || 100)), 0);
+                                             setSettings({ ...settings, canvasHeight: Math.max(200, maxHeight + 100) });
+                                          }}
+                                          className="text-[8px] font-black text-blue-500 uppercase hover:underline"
+                                       >
+                                          Fit to Content
+                                       </button>
+                                    </div>
                                     <input type="number" value={settings.canvasHeight} onChange={(e) => setSettings({ ...settings, canvasHeight: parseInt(e.target.value) })} className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white font-black text-lg outline-none focus:border-blue-500" />
                                 </div>
                              </div>
@@ -486,6 +520,18 @@ export function VisualDesigner({ section, isOpen, onClose, onSave }: VisualDesig
               settings.theme === "glass" ? "bg-white/5 backdrop-blur-[120px] ring-1 ring-white/10 text-white" : "bg-white text-black"
             } rounded-[5.5rem] overflow-hidden`}
           >
+             {/* End of Canvas Marker & Resize Handle */}
+             <div 
+                onMouseDown={(e) => { e.stopPropagation(); startCanvasResize(e.clientY); }}
+                className="absolute bottom-0 inset-x-0 h-4 cursor-ns-resize z-[200] flex items-center justify-center group"
+             >
+                <div className="absolute inset-x-0 h-px border-t border-dashed border-red-500/20 group-hover:border-blue-500/50 transition-colors" />
+                <div className="bg-[#0A0A0A] px-4 py-1.5 border border-white/5 rounded-full text-[8px] font-black text-red-500/30 group-hover:text-blue-500 group-hover:border-blue-500/30 uppercase tracking-[0.3em] transition-all flex items-center gap-2 shadow-2xl">
+                   <Navigation className="w-2 h-2 rotate-180" />
+                   Resize Section Height
+                </div>
+             </div>
+
              {blocks.map((block) => {
                 const isSelected = selectedBlockId === block.id;
                 const alignmentClass = block.align === "center" ? "mx-auto text-center" : block.align === "right" ? "ml-auto text-right" : "";
