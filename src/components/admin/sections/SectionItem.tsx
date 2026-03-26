@@ -3,16 +3,17 @@
 import React from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { GripVertical, Pencil, Trash2, Eye, EyeOff } from "lucide-react";
+import { GripVertical, Pencil, Trash2, Eye, EyeOff, RotateCcw } from "lucide-react";
 
 interface SectionItemProps {
   section: any;
   onEdit: (section: any) => void;
   onToggle: (id: string, isActive: boolean) => void;
   onDelete: (id: string) => void;
+  onReset: (id: string) => void;
 }
 
-export function SectionItem({ section, onEdit, onToggle, onDelete }: SectionItemProps) {
+export function SectionItem({ section, onEdit, onToggle, onDelete, onReset }: SectionItemProps) {
   const {
     attributes,
     listeners,
@@ -64,6 +65,19 @@ export function SectionItem({ section, onEdit, onToggle, onDelete }: SectionItem
       </div>
 
       <div className="flex items-center gap-2">
+        {/* Reset Button */}
+        <button
+          onClick={() => {
+            if (confirm("Reset this section to its original content? All your changes will be lost.")) {
+              onReset(section.id);
+            }
+          }}
+          className="p-2 text-amber-500 hover:bg-amber-50 rounded-lg transition-colors"
+          title="Reset to Default"
+        >
+          <RotateCcw className="w-5 h-5" />
+        </button>
+
         {/* Toggle Visibility */}
         <button
           onClick={() => onToggle(section.id, !section.isActive)}

@@ -123,8 +123,22 @@ export default function SectionsManager() {
         setSections(sections.map(s => s.id === id ? { ...s, content } : s));
         toast.success("Content updated successfully");
       }
-    } catch (error) {
-      toast.error("Failed to update content");
+    } catch (error: any) {
+      const message = error.response?.data?.message || "Failed to update content";
+      toast.error(message);
+    }
+  };
+
+  const handleResetSection = async (id: string) => {
+    try {
+      const response = await axios.post(`${API_URL}/api/sections/${id}/reset`);
+      if (response.data.success) {
+        setSections(sections.map(s => s.id === id ? response.data.data : s));
+        toast.success("Section reset to default");
+      }
+    } catch (error: any) {
+      const message = error.response?.data?.message || "Failed to reset section";
+      toast.error(message);
     }
   };
 
@@ -181,6 +195,7 @@ export default function SectionsManager() {
                   onEdit={handleEditContent}
                   onToggle={handleToggleVisibility}
                   onDelete={handleDeleteSection}
+                  onReset={handleResetSection}
                 />
               ))}
             </div>
