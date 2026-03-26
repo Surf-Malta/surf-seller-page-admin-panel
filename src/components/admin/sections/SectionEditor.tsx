@@ -219,6 +219,30 @@ const FORM_CONFIG: Record<string, any[]> = {
     },
     { name: "copyright", label: "Copyright Text", type: "text" },
   ],
+  "custom-layout": [
+    {
+      name: "blocks",
+      label: "UI Content Blocks",
+      type: "objectList",
+      fields: [
+        { 
+          name: "type", 
+          label: "Block Type", 
+          type: "text", 
+          placeholder: "heading, text, image, button, or spacer" 
+        },
+        { name: "text", label: "Text Content", type: "textarea" },
+        { name: "imageUrl", label: "Image (Optional)", type: "image" },
+        { name: "url", label: "Link/Action (Optional)", type: "text" },
+        { 
+          name: "style", 
+          label: "Custom Styling (Tailwind)", 
+          type: "text",
+          placeholder: "e.g. text-center font-bold px-4" 
+        },
+      ],
+    },
+  ],
 };
 
 export function SectionEditor({ section, isOpen, onClose, onSave }: SectionEditorProps) {

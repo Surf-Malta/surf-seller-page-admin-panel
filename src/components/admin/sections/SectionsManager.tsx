@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { 
-  DndContext, 
+import {
+  DndContext,
   closestCenter,
   KeyboardSensor,
   PointerSensor,
@@ -20,6 +20,8 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 import { SectionItem } from "@/components/admin/sections/SectionItem";
 import { SectionEditor } from "@/components/admin/sections/SectionEditor";
+import { SectionPicker } from "@/components/admin/sections/SectionPicker";
+import { VisualDesigner } from "./VisualDesigner";
 import { Plus, RefreshCw, Layout } from "lucide-react";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
@@ -29,6 +31,8 @@ export default function SectionsManager() {
   const [loading, setLoading] = useState(true);
   const [editingSection, setEditingSection] = useState<any | null>(null);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
+  const [isPickerOpen, setIsPickerOpen] = useState(false);
+  const [isVisualDesignerOpen, setIsVisualDesignerOpen] = useState(false);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -113,7 +117,11 @@ export default function SectionsManager() {
 
   const handleEditContent = (section: any) => {
     setEditingSection(section);
-    setIsEditorOpen(true);
+    if (section.type === "custom-layout") {
+      setIsVisualDesignerOpen(true);
+    } else {
+      setIsEditorOpen(true);
+    }
   };
 
   const handleSaveContent = async (id: string, content: any) => {
@@ -142,6 +150,22 @@ export default function SectionsManager() {
     }
   };
 
+  const handleCreateSection = async (type: string) => {
+    try {
+      const response = await axios.post(`${API_URL}/api/sections/template`, { type });
+      if (response.data.success) {
+        setSections([...sections, response.data.data]);
+        setIsPickerOpen(false);
+        toast.success("New section added!");
+        // Optionally open editor immediately
+        handleEditContent(response.data.data);
+      }
+    } catch (error: any) {
+      const message = error.response?.data?.message || "Failed to create section";
+      toast.error(message);
+    }
+  };
+
   return (
     <div className="max-w-4xl mx-auto py-8 px-4">
       <div className="flex items-center justify-between mb-8">
@@ -157,7 +181,10 @@ export default function SectionsManager() {
           >
             <RefreshCw className={`w-5 h-5 ${loading ? "animate-spin" : ""}`} />
           </button>
-          <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-bold rounded-lg hover:bg-blue-700 transition-all shadow-md active:scale-95">
+          <button 
+            onClick={() => setIsPickerOpen(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-bold rounded-lg hover:bg-blue-700 transition-all shadow-md active:scale-95"
+          >
             <Plus className="w-4 h-4" />
             Add Section
           </button>
@@ -209,6 +236,21 @@ export default function SectionsManager() {
         onClose={() => setIsEditorOpen(false)}
         onSave={handleSaveContent}
       />
+
+      <SectionPicker
+        isOpen={isPickerOpen}
+        onClose={() => setIsPickerOpen(false)}
+        onSelect={handleCreateSection}
+      />
+
+      {editingSection?.type === "custom-layout" && (
+        <VisualDesigner
+          section={editingSection}
+          isOpen={isVisualDesignerOpen}
+          onClose={() => setIsVisualDesignerOpen(false)}
+          onSave={handleSaveContent}
+        />
+      )}
     </div>
   );
 }
