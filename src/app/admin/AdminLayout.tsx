@@ -48,17 +48,23 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       description: "Contact inquiries",
     },
     {
-      name: "Pages",
-      href: "/admin/navigation",
+      name: "Sections",
+      href: "/admin/sections",
       icon: Navigation,
-      description: "Manage navigation pages",
+      description: "Manage landing page sections",
     },
-    {
-      name: "Content",
-      href: "/admin/content",
-      icon: FileText,
-      description: "Edit page content sections",
-    },
+    // {
+    //   name: "Pages",
+    //   href: "/admin/navigation",
+    //   icon: Navigation,
+    //   description: "Manage navigation pages",
+    // },
+    // {
+    //   name: "Content",
+    //   href: "/admin/content",
+    //   icon: FileText,
+    //   description: "Edit page content sections",
+    // },
     {
       name: "Settings",
       href: "/admin/settings",
