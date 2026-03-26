@@ -1,274 +1,217 @@
 "use client";
 
-import { useSelector } from "react-redux";
-import { RootState } from "@/store";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import {
-  BarChart3,
-  Navigation,
-  FileText,
-  Users,
-  Activity,
-  Globe,
-  TrendingUp,
+  Layout,
+  Zap,
+  Sparkles,
   Eye,
-  Edit,
-  Plus,
-  CheckCircle,
+  Globe,
+  Activity,
 } from "lucide-react";
 import Link from "next/link";
 
-export default function AdminDashboard() {
-  const { items: navigationItems } = useSelector(
-    (state: RootState) => state.navigation
-  );
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
-  // Calculate content statistics
-  const totalPages = navigationItems.length;
-  const hasHomePage = navigationItems.some((item) => item.href === "/");
-  const hasPricingPage = navigationItems.some(
-    (item) => item.href === "/pricing"
-  );
-  const hasSignupPage = navigationItems.some((item) => item.href === "/signup");
+export default function AdminDashboard() {
+  const [sections, setSections] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchSections = async () => {
+      try {
+        const response = await axios.get(`${API_URL}/api/sections`);
+        if (response.data.success) {
+          setSections(response.data.data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch dashboard stats:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchSections();
+  }, []);
+
+  // Calculate real metrics
+  const activeSections = sections.filter(s => s.isActive).length;
+  const totalBlocks = sections.reduce((acc, s) => acc + (s.content?.blocks?.length || 0), 0);
+  const customLayouts = sections.filter(s => s.type === 'custom-layout').length;
 
   const stats = [
     {
-      name: "Navigation Pages",
-      value: totalPages,
-      icon: Navigation,
-      color: "bg-blue-500",
-      description: "Total pages in navigation",
+      name: "Sections Live",
+      value: activeSections,
+      icon: Layout,
+      color: "from-blue-500 to-indigo-600",
+      description: "Visible on landing page",
     },
     {
-      name: "Content Sections",
-      value: "0", // This would be calculated from actual content
-      icon: FileText,
-      color: "bg-green-500",
-      description: "Across all pages",
+      name: "Studio Elements",
+      value: totalBlocks,
+      icon: Zap,
+      color: "from-purple-500 to-pink-600",
+      description: "Interactive blocks used",
     },
     {
-      name: "Setup Progress",
-      value: `${Math.round((totalPages / 6) * 100)}%`,
-      icon: Activity,
-      color: "bg-purple-500",
-      description: "Recommended 6 pages",
+      name: "Custom Designs",
+      value: customLayouts,
+      icon: Sparkles,
+      color: "from-amber-400 to-orange-600",
+      description: "Bespoke studio layouts",
     },
     {
-      name: "Live Status",
-      value: hasHomePage ? "Active" : "Setup",
-      icon: Globe,
-      color: hasHomePage ? "bg-green-500" : "bg-orange-500",
-      description: hasHomePage ? "Site is live" : "Needs setup",
+      name: "Total Canvas",
+      value: sections.length,
+      icon: Sparkles,
+      color: "from-cyan-500 to-blue-600",
+      description: "Total created sections",
     },
   ];
 
   const quickActions = [
     {
-      title: "Manage Pages",
-      description: "Add, edit, or remove navigation pages",
-      href: "/admin/navigation",
-      icon: Navigation,
-      color: "bg-blue-50 text-blue-700 border-blue-200",
-      buttonColor: "bg-blue-600 hover:bg-blue-700",
+      title: "Launch Surf Studio",
+      description: "Pixel-perfect visual design canvas for your single-page site",
+      href: "/admin/sections",
+      icon: Sparkles,
+      color: "bg-gradient-to-br from-indigo-50 to-violet-50 text-indigo-700 border-indigo-200",
+      buttonColor: "bg-indigo-600 hover:bg-indigo-700",
+      secondaryIcon: Zap,
     },
     {
-      title: "Edit Content",
-      description: "Update page content and sections",
-      href: "/admin/content",
-      icon: FileText,
-      color: "bg-green-50 text-green-700 border-green-200",
-      buttonColor: "bg-green-600 hover:bg-green-700",
-    },
-    {
-      title: "Preview Site",
-      description: "View your live seller platform",
-      href: "https://surf-seller-page.vercel.app",
+      title: "Live Preview",
+      description: "View your creative site live in real-time",
+      href: "https://sell.surf.mt",
       icon: Eye,
-      color: "bg-purple-50 text-purple-700 border-purple-200",
-      buttonColor: "bg-purple-600 hover:bg-purple-700",
+      color: "bg-gradient-to-br from-emerald-50 to-teal-50 text-emerald-700 border-emerald-200",
+      buttonColor: "bg-emerald-600 hover:bg-emerald-700",
       external: true,
-    },
-  ];
-
-  const setupChecklist = [
-    {
-      title: "Create Home Page",
-      completed: hasHomePage,
-      description: "Main landing page for your seller platform",
-    },
-    {
-      title: "Add Pricing Page",
-      completed: hasPricingPage,
-      description: "Show commission structure and plans",
-    },
-    {
-      title: "Setup Registration",
-      completed: hasSignupPage,
-      description: "Enable seller sign-up page",
-    },
-    {
-      title: "Add Content Sections",
-      completed: false, // Would check actual content
-      description: "Create hero, features, and testimonial sections",
-    },
-    {
-      title: "Configure Settings",
-      completed: false,
-      description: "Setup site metadata and configurations",
     },
   ];
 
   const recentActivity = [
     {
-      action: "Navigation system initialized",
+      action: "Surf Studio v6.0 deployed",
       time: "Just now",
+      color: "bg-indigo-500",
+    },
+    {
+      action: "Absolute positioning enabled",
+      time: "2 mins ago",
       color: "bg-blue-500",
     },
     {
-      action: "Admin panel accessed",
-      time: "2 mins ago",
-      color: "bg-green-500",
-    },
-    {
-      action: "Database connection established",
+      action: "CORS whitelist updated",
       time: "5 mins ago",
-      color: "bg-purple-500",
+      color: "bg-green-500",
     },
   ];
 
-  const completedTasks = setupChecklist.filter((task) => task.completed).length;
-  const setupProgress = Math.round(
-    (completedTasks / setupChecklist.length) * 100
-  );
-
-  // Create sorted copies of navigation items to avoid mutation
-  const sortedNavigationItems = [...navigationItems].sort(
-    (a, b) => a.order - b.order
-  );
-  const displayedNavigationItems = sortedNavigationItems.slice(0, 5);
-
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 max-w-7xl mx-auto">
       {/* Header */}
-      <div className="border-b border-gray-200 pb-4">
-        <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
-          Seller Platform Dashboard
+      <div className="border-b border-gray-100 pb-6">
+        <h1 className="text-3xl font-black text-gray-900 tracking-tight">
+          Creative Studio Dashboard
         </h1>
-        <p className="text-gray-600 mt-2 text-sm sm:text-base">
-          Manage your seller landing page content and navigation
+        <p className="text-gray-500 mt-2 text-lg">
+          Manage your high-fidelity design blocks and creative canvas.
         </p>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-        {stats.map((stat) => (
-          <div
-            key={stat.name}
-            className="bg-white p-4 sm:p-6 rounded-lg shadow-sm border border-gray-200"
-          >
-            <div className="flex items-center">
-              <div
-                className={`p-2 sm:p-3 rounded-lg ${stat.color} flex-shrink-0`}
-              >
-                <stat.icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-              </div>
-              <div className="ml-3 sm:ml-4 min-w-0 flex-1">
-                <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">
-                  {stat.name}
-                </p>
-                <p className="text-lg sm:text-2xl font-semibold text-gray-900 truncate">
-                  {stat.value}
-                </p>
-                <p className="text-xs text-gray-500 truncate">
-                  {stat.description}
-                </p>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Setup Progress */}
-      {setupProgress < 100 && (
-        <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-4 sm:p-6 rounded-lg border border-blue-200">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 space-y-2 sm:space-y-0">
-            <h2 className="text-lg font-semibold text-blue-900">
-              Setup Progress
-            </h2>
-            <span className="text-sm font-medium text-blue-700">
-              {setupProgress}% Complete
-            </span>
-          </div>
-          <div className="w-full bg-blue-200 rounded-full h-2 mb-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {loading ? (
+          [1, 2, 3, 4].map((i) => (
+            <div key={i} className="animate-pulse bg-white p-6 rounded-2xl border border-gray-100 h-32" />
+          ))
+        ) : (
+          stats.map((stat) => (
             <div
-              className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-              style={{ width: `${setupProgress}%` }}
-            ></div>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {setupChecklist.map((task, index) => (
-              <div key={index} className="flex items-start space-x-3">
-                <CheckCircle
-                  className={`w-5 h-5 mt-0.5 flex-shrink-0 ${
-                    task.completed ? "text-green-600" : "text-gray-300"
-                  }`}
-                />
+              key={stat.name}
+              className="group bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:border-blue-200 transition-all hover:shadow-xl hover:-translate-y-1 overflow-hidden relative"
+            >
+              <div className={`absolute top-0 right-0 w-24 h-24 bg-gradient-to-br ${stat.color} opacity-[0.03] -mr-8 -mt-8 rounded-full`} />
+              <div className="flex items-center relative gap-4">
+                <div
+                  className={`p-3 rounded-xl bg-gradient-to-br ${stat.color} flex-shrink-0 shadow-lg shadow-blue-500/10`}
+                >
+                  <stat.icon className="w-6 h-6 text-white" />
+                </div>
                 <div className="min-w-0 flex-1">
-                  <p
-                    className={`text-sm font-medium ${
-                      task.completed ? "text-green-800" : "text-blue-800"
-                    }`}
-                  >
-                    {task.title}
+                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                    {stat.name}
                   </p>
-                  <p className="text-xs text-blue-600 break-words">
-                    {task.description}
+                  <div className="flex items-baseline gap-2">
+                    <p className="text-3xl font-black text-gray-900 tracking-tight">
+                      {stat.value}
+                    </p>
+                    {stat.name === "Sections Live" && (
+                      <span className="flex h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+                    )}
+                  </div>
+                  <p className="text-xs text-gray-500 font-medium">
+                    {stat.description}
                   </p>
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
-      )}
+            </div>
+          ))
+        )}
+      </div>
 
       {/* Quick Actions */}
-      <div className="bg-white p-4 sm:p-6 rounded-lg shadow-sm border border-gray-200">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">
-          Quick Actions
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
+        <div className="flex items-center gap-2 mb-8 text-indigo-600">
+          <Zap className="w-6 h-6 fill-current" />
+          <h2 className="text-2xl font-black text-gray-900 tracking-tight">
+            Quick Design Actions
+          </h2>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {quickActions.map((action) => (
             <div
               key={action.title}
-              className={`p-4 border rounded-lg transition-all hover:shadow-md ${action.color}`}
+              className={`group flex flex-col p-8 border rounded-3xl transition-all hover:shadow-2xl hover:scale-[1.02] ${action.color} border-transparent hover:border-white/50 relative overflow-hidden`}
             >
-              <div className="flex items-start mb-3">
-                <action.icon className="w-6 h-6 sm:w-8 sm:h-8 mr-3 flex-shrink-0 mt-0.5" />
-                <div className="min-w-0 flex-1">
-                  <h3 className="font-medium text-sm sm:text-base">
-                    {action.title}
-                  </h3>
-                  <p className="text-xs sm:text-sm opacity-75 break-words">
-                    {action.description}
-                  </p>
+              <div className="flex items-start justify-between mb-6">
+                <div className="p-4 bg-white/50 backdrop-blur-sm rounded-2xl border border-white shadow-sm">
+                  <action.icon className="w-8 h-8 text-indigo-600" />
                 </div>
+                {action.secondaryIcon && (
+                  <action.secondaryIcon className="w-6 h-6 text-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                )}
               </div>
+
+              <div className="flex-1">
+                <h3 className="text-2xl font-black text-gray-900 mb-2">
+                  {action.title}
+                </h3>
+                <p className="text-md text-gray-600 mb-8 leading-relaxed max-w-sm">
+                  {action.description}
+                </p>
+              </div>
+
               {action.external ? (
                 <a
                   href={action.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`inline-flex items-center px-3 py-2 text-xs sm:text-sm font-medium text-white rounded-md transition-colors ${action.buttonColor} w-full justify-center sm:w-auto`}
+                  className={`inline-flex items-center justify-center px-8 py-4 text-md font-black text-white rounded-2xl transition-all shadow-xl ${action.buttonColor} active:scale-95`}
                 >
-                  <Eye className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
-                  View Site
+                  <Eye className="w-5 h-5 mr-2" />
+                  Live Preview
+                  <Globe className="w-5 h-5 ml-2 opacity-50" />
                 </a>
               ) : (
                 <Link
                   href={action.href}
-                  className={`inline-flex items-center px-3 py-2 text-xs sm:text-sm font-medium text-white rounded-md transition-colors ${action.buttonColor} w-full justify-center sm:w-auto`}
+                  className={`inline-flex items-center justify-center px-8 py-4 text-md font-black text-white rounded-2xl transition-all shadow-xl ${action.buttonColor} active:scale-95`}
                 >
-                  <Edit className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
-                  Open
+                  <Sparkles className="w-5 h-5 mr-2" />
+                  Launch Studio
                 </Link>
               )}
             </div>
@@ -276,145 +219,7 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Current Pages */}
-        <div className="bg-white p-4 sm:p-6 rounded-lg shadow-sm border border-gray-200">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 space-y-2 sm:space-y-0">
-            <h2 className="text-lg font-semibold text-gray-900">
-              Current Pages
-            </h2>
-            <Link
-              href="/admin/navigation"
-              className="text-sm text-blue-600 hover:text-blue-700"
-            >
-              Manage All
-            </Link>
-          </div>
 
-          {navigationItems.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
-              <Navigation className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-              <h3 className="text-lg font-medium mb-2">No Pages Yet</h3>
-              <p className="mb-4 text-sm px-4">
-                Start by creating your first navigation page
-              </p>
-              <Link
-                href="/admin/navigation"
-                className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Add First Page
-              </Link>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {displayedNavigationItems.map((item) => (
-                <div
-                  key={item.id}
-                  className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
-                >
-                  <div className="min-w-0 flex-1">
-                    <h4 className="font-medium text-gray-900 text-sm sm:text-base truncate">
-                      {item.label}
-                    </h4>
-                    <p className="text-xs sm:text-sm text-gray-600 break-all">
-                      {item.href}
-                    </p>
-                  </div>
-                  <Link
-                    href="/admin/content"
-                    className="text-blue-600 hover:text-blue-700 ml-2 flex-shrink-0"
-                  >
-                    <Edit className="w-4 h-4" />
-                  </Link>
-                </div>
-              ))}
-              {navigationItems.length > 5 && (
-                <p className="text-sm text-gray-500 text-center pt-2">
-                  And {navigationItems.length - 5} more pages...
-                </p>
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* Recent Activity */}
-        <div className="bg-white p-4 sm:p-6 rounded-lg shadow-sm border border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
-            Recent Activity
-          </h2>
-          <div className="space-y-3">
-            {recentActivity.map((activity, index) => (
-              <div key={index} className="flex items-center text-sm">
-                <div
-                  className={`w-2 h-2 ${activity.color} rounded-full mr-3 flex-shrink-0`}
-                ></div>
-                <span className="text-gray-600 flex-1 min-w-0 break-words">
-                  {activity.action}
-                </span>
-                <span className="text-gray-400 ml-2 flex-shrink-0 text-xs sm:text-sm">
-                  {activity.time}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Getting Started Guide */}
-      {totalPages === 0 && (
-        <div className="bg-white p-4 sm:p-6 rounded-lg shadow-sm border border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
-            Getting Started with Your Seller Platform
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="text-center p-4 border border-gray-200 rounded-lg">
-              <div className="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-3 text-sm font-semibold">
-                1
-              </div>
-              <h3 className="font-medium text-gray-900 mb-2 text-sm sm:text-base">
-                Create Pages
-              </h3>
-              <p className="text-xs sm:text-sm text-gray-600">
-                Add navigation pages for your seller platform
-              </p>
-            </div>
-            <div className="text-center p-4 border border-gray-200 rounded-lg">
-              <div className="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-3 text-sm font-semibold">
-                2
-              </div>
-              <h3 className="font-medium text-gray-900 mb-2 text-sm sm:text-base">
-                Add Content
-              </h3>
-              <p className="text-xs sm:text-sm text-gray-600">
-                Create compelling content sections for each page
-              </p>
-            </div>
-            <div className="text-center p-4 border border-gray-200 rounded-lg">
-              <div className="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-3 text-sm font-semibold">
-                3
-              </div>
-              <h3 className="font-medium text-gray-900 mb-2 text-sm sm:text-base">
-                Customize
-              </h3>
-              <p className="text-xs sm:text-sm text-gray-600">
-                Adjust settings and appearance to match your brand
-              </p>
-            </div>
-            <div className="text-center p-4 border border-gray-200 rounded-lg">
-              <div className="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-3 text-sm font-semibold">
-                4
-              </div>
-              <h3 className="font-medium text-gray-900 mb-2 text-sm sm:text-base">
-                Launch
-              </h3>
-              <p className="text-xs sm:text-sm text-gray-600">
-                Preview and publish your seller platform
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

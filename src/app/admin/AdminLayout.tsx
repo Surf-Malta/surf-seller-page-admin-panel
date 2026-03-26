@@ -65,12 +65,12 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     //   icon: FileText,
     //   description: "Edit page content sections",
     // },
-    {
-      name: "Settings",
-      href: "/admin/settings",
-      icon: Settings,
-      description: "Platform configuration",
-    },
+    // {
+    //   name: "Settings",
+    //   href: "/admin/settings",
+    //   icon: Settings,
+    //   description: "Platform configuration",
+    // },
   ];
 
   const isActive = (href: string) => {
@@ -94,9 +94,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
       {/* Sidebar */}
       <div
-        className={`fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
+        className={`fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
       >
         <div className="flex items-center justify-between h-16 px-4 sm:px-6 border-b border-gray-200">
           <div className="flex items-center min-w-0">
@@ -124,19 +123,17 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
               <Link
                 key={item.name}
                 href={item.href}
-                className={`flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 group ${
-                  isActive(item.href)
+                className={`flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 group ${isActive(item.href)
                     ? "bg-blue-50 text-blue-700 border-r-2 border-blue-700"
                     : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                }`}
+                  }`}
                 onClick={() => setSidebarOpen(false)}
               >
                 <item.icon
-                  className={`w-5 h-5 mr-3 flex-shrink-0 ${
-                    isActive(item.href)
+                  className={`w-5 h-5 mr-3 flex-shrink-0 ${isActive(item.href)
                       ? "text-blue-600"
                       : "text-gray-400 group-hover:text-gray-600"
-                  }`}
+                    }`}
                 />
                 <div className="min-w-0 flex-1">
                   <div className="truncate">{item.name}</div>
